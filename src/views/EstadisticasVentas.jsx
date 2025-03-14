@@ -67,6 +67,7 @@ export default function EstadisticasVentas() {
 
     const noHayDatosDiarios = Array.isArray(ventasDiarias) && ventasDiarias.length === 0;
 
+    const mensajeDiario = ventasDiarias?.message || '';
 
     return (
         <div>
@@ -106,38 +107,27 @@ export default function EstadisticasVentas() {
 
                 {!cargandoDiario && ventasDiarias && (
                     <>
-                        {noHayDatosDiarios ? (
+                        {mensajeDiario ? ( // Si el mensaje de error existe, mostrarlo
                             <div className="flex items-center justify-center py-4 px-8 bg-red-300 border border-red-500 rounded-lg my-5 gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                                </svg>
-
+                                <BiErrorAlt className="text-3xl text-red-800" />
+                                <span className="text-xl text-red-800 font-semibold">{mensajeDiario}</span>
+                            </div>
+                        ) : noHayDatosDiarios ? (
+                            <div className="flex items-center justify-center py-4 px-8 bg-red-300 border border-red-500 rounded-lg my-5 gap-2">
+                                <BiErrorAlt className="text-3xl text-red-800" />
                                 <span className="text-xl text-red-800 font-semibold">No hay datos de ventas diarias para este rango de fechas</span>
                             </div>
                         ) : (
-                            ventasDiarias?.length > 0 && (
+                            ventasDiarias.length > 0 && (
                                 <>
                                     <h2 className="text-xl font-bold mt-5">Ventas por Día</h2>
                                     <ResponsiveContainer width="100%" height={300}>
-                                        <BarChart data={ventasDiarias}
-                                            margin={{
-                                            top: 5,
-                                            right: 30,
-                                            left: 20,
-                                            bottom: 5,
-                                        }}>
+                                        <BarChart data={ventasDiarias} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                             <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis 
-                                                dataKey="dia" 
-                                                tickFormatter={(tick, index) => `${ventasDiarias[index]?.dia} (${ventasDiarias[index]?.fecha.substring(5)})`} 
-                                            />
+                                            <XAxis dataKey="dia" tickFormatter={(tick, index) => `${ventasDiarias[index]?.dia} (${ventasDiarias[index]?.fecha.substring(5)})`} />
                                             <YAxis />
                                             <Tooltip formatter={(value) => formatearDinero(value)} />
-                                            
-                                            <Bar 
-                                                dataKey="total_vendido" 
-                                                fill="#82ca9d" activeBar={<Rectangle fill="#0b5345" stroke="#239b56" />}
-                                            />
+                                            <Bar dataKey="total_vendido" fill="#82ca9d" activeBar={<Rectangle fill="#0b5345" stroke="#239b56" />} />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </>

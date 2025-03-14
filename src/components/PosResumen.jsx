@@ -29,13 +29,20 @@ const comprobarPedido = () => pedido.length === 0;
             No hay elementos en tu venta aun
             </p>
         ) : (
-            pedido.map(producto => (
-            <PosResumenProducto
-                key={producto.id}
-                producto={producto}
-            />
-            ))
-        )}
+            pedido.map(producto => {
+                // Calcula la cantidad real según si se usa oferta o vencimiento
+                const cantidadProducto = producto.usarOferta
+                  ? (producto.ofertas?.cantidad || 0)
+                  : (producto.vencimientos?.[0]?.cantidad || 0);
+                  
+                return (
+                  <PosResumenProducto
+                    key={producto.uniqueId}
+                    producto={producto}
+                  />
+                );
+              })
+            )}
         </div>
         <p className="text-xl mt-6">
         Total a vender: {''}

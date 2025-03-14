@@ -18,7 +18,9 @@ export default function FormularioProductos({producto}) {
     const [fechaVencimiento, setFechaVencimiento] = useState(producto?.vencimientos  || [{ fecha_vencimiento: "", cantidad: 0 }]);
     const [departamentos, setDepartamentos] = useState([]);
     const [errores, setErrores] = useState({});
-    const [ofertas, setOfertas] = useState(producto?.ofertas || [{precio_oferta: "", cantidad: 0 }]);
+    const [tieneOferta, setTieneOferta] = useState(false);
+    const [precioOferta, setPrecioOferta] = useState("");
+    const [cantidadOferta, setCantidadOferta] = useState("");
 
     // Cargar departamentos
     useEffect(() => {
@@ -52,8 +54,18 @@ export default function FormularioProductos({producto}) {
                     // Cargar los vencimientos
                     setFechaVencimiento(data.producto.vencimientos || [{ fecha_vencimiento: "", cantidad: 0 }]);
                     console.log("producto cargado:", data.producto.vencimientos);
+                     // Verificar y cargar la oferta
+                     if (data.producto.ofertas) {
+                        setTieneOferta(true);
+                        setPrecioOferta(data.producto.ofertas.precio_oferta);  // Usar el campo correcto
+                        setCantidadOferta(data.producto.ofertas.cantidad);
+                    } else {
+                        setTieneOferta(false);
+                        setPrecioOferta("");  // Limpiar el estado de oferta
+                        setCantidadOferta("");  // Limpiar el estado de cantidad
+                    }
                 } catch (error) {
-                    console.error("Error al cargar el producto y sus vencimientos", error);
+                    console.error("Error al cargar el producto, sus vencimientos y sus ofertas correspondientes", error);
                 }
             }
         };
@@ -82,29 +94,21 @@ export default function FormularioProductos({producto}) {
         setFechaVencimiento(updatedVencimientos);
     };
 
-    const handleAddOferta = () => {
-        setOfertas([...ofertas, { precio_oferta: "", cantidad: 0 }]);
-    };
-    
-    const handleRemoveOferta = (index) => {
-        setOfertas(ofertas.filter((_, i) => i !== index));
-    };
-    
-    const handleOfertaChange = (index, field, value) => {
-        const updatedOfertas = ofertas.map((oferta, i) => {
-            if (i === index) {
-                return { ...oferta, [field]: value };
-            }
-            return oferta;
-        });
-        setOfertas(updatedOfertas);
-    };
-
     // Submit del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const datos = { nombre, precio: parseFloat(precio), codigo_barras, departamento_id: parseInt(departamentoId, 10),  vencimientos: fechaVencimiento, ofertas: ofertas || []  };
+        const datos = { 
+            nombre, 
+            precio: parseFloat(precio), 
+            codigo_barras, 
+            departamento_id: parseInt(departamentoId, 10),  
+            vencimientos: fechaVencimiento, 
+            oferta: tieneOferta ? { 
+                precioOferta: parseFloat(precioOferta), 
+                cantidadOferta: parseInt(cantidadOferta, 10)
+            } : null,  
+        };
         
         console.log("FormData antes de enviar:", datos);
 
@@ -137,7 +141,7 @@ export default function FormularioProductos({producto}) {
             }
 
         } catch (error) {
-            if (error.response?.status === 422) {
+            if (error.response?.status === 422 && error.response.data.errors) {
                 setErrores(error.response.data.errors);
             } else {
                 toast.error("Error al guardar el producto");
@@ -251,38 +255,35 @@ export default function FormularioProductos({producto}) {
                 </div>
                 
                 <div className="mb-4">
-                    <label className="text-slate-800 mb-2">Ofertas:</label>
-                    {ofertas.map((oferta, index) => (
-                        <div key={index} className="flex gap-3 mb-3">
-                            <input
-                                type="number"
-                                placeholder="Precio oferta"
-                                value={oferta.precio_oferta}
-                                onChange={(e) => handleOfertaChange(index, 'precio_oferta', e.target.value)}
-                                className="border mt-1 p-3 bg-gray-50"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Cantidad"
-                                value={oferta.cantidad}
-                                onChange={(e) => handleOfertaChange(index, 'cantidad', e.target.value)}
-                                className="border mt-1 p-3 bg-gray-50"
-                            />
-                            <button type="button" className="text-red-600 hover:text-red-800 text-xl font-bold" onClick={() => handleRemoveOferta(index)}><X size={20} /></button>
-
-                            <div className="flex justify-start mb-2">
-                                {errores[`oferta.${index}.precio_oferta`] && (
-                                    <p className="text-red-500 text-sm">{errores[`oferta.${index}.precio_oferta`][0]}</p>
-                                )}
-                                {errores[`oferta.${index}.cantidad`] && (
-                                    <p className="text-red-500 text-sm">{errores[`oferta.${index}.cantidad`][0]}</p>
-                                )}
-                            </div>
+                    <label>
+                    <input
+                        type="checkbox"
+                        checked={tieneOferta}
+                        onChange={() => setTieneOferta(prev => !prev)}
+                        className="m-2"
+                    />
+                        ¿Este producto tiene oferta?
+                    </label>
+                    {tieneOferta && (
+                        <div className="flex p-2 gap-3 items-center">
+                        <label>Precio de oferta:</label>
+                        <input
+                            type="number"
+                            value={precioOferta}
+                            onChange={(e) => setPrecioOferta(e.target.value)}
+                            required={tieneOferta}
+                            className="border p-2 w-1/6"
+                        />
+                        <label>Cantidad en oferta:</label>
+                        <input
+                            type="number"
+                            value={cantidadOferta}
+                            onChange={(e) => setCantidadOferta(e.target.value)}
+                            required={tieneOferta}
+                            className="border p-2 w-1/6"
+                        />
                         </div>
-                    ))}
-                    <button type="button" onClick={handleAddOferta} className="bg-amber-500 hover:bg-amber-800 text-white text-md px-1 py-2 rounded w-1/4">
-                        Agregar Oferta
-                    </button>
+                    )}
                 </div>
 
                 {producto?.id ? (

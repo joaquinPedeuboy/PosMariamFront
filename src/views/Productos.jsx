@@ -22,7 +22,7 @@ export default function Productos() {
         }
     }).then((res) => res.data);
 
-    const {data, error, isLoading} = useSWR(`/api/productos?busqueda=${busqueda}&page=${paginaActual}&per_page=5`, fetcher, { refreshInterval: 10000 })
+    const {data, error, isLoading, mutate} = useSWR(`/api/productos?busqueda=${busqueda}&page=${paginaActual}&per_page=5`, fetcher, { refreshInterval: 10000 })
 
     const handleBuscar = () => {
         setPaginaActual(1);
@@ -119,7 +119,7 @@ export default function Productos() {
                             {data?.data.length === 0 ? (
                                 <p>No se encontraron productos.</p>
                             ) : (
-                                data?.data.map((producto) => <Producto key={producto.id} producto={producto} />)
+                                data?.data.map((producto) => <Producto key={producto.id} producto={producto} mutate={mutate} />)
                             )}
                         </div>
 

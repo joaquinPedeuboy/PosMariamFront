@@ -10,6 +10,9 @@ import Pos from "../views/Pos";
 import Ventas from "../views/Ventas";
 import EstadisticasVentas from "../views/EstadisticasVentas";
 import EstadisticasProductos from "../views/EstadisticasProductos";
+import Ofertas from "../views/Ofertas";
+import Vencimientos from "../views/Vencimientos";
+
 
 const router = createBrowserRouter([
     {
@@ -59,6 +62,14 @@ const router = createBrowserRouter([
             {
                 path: '/admin/productos/estadisticas',
                 element: <EstadisticasProductos />
+            },
+            {
+                path: '/admin/productos/ofertas',
+                element: <Ofertas />
+            },
+            {
+                path: '/admin/productos/vencimientos',
+                element: <Vencimientos />
             }
         ]
     }

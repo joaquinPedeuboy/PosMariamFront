@@ -44,8 +44,8 @@ export default function EstadisticasProductos() {
     <>
       {/* Spinner de carga */}
       {isValidating && (
-          <div className="flex justify-center items-center h-auto">
-              <Puff height="200" width="200" color="#ba5dd1" ariaLabel="cargando.." />
+          <div className="fixed inset-0 flex justify-center items-center bg-white">
+              <Puff height="150" width="150" color="#ba5dd1" ariaLabel="cargando.." />
           </div>
       )}
       {!isValidating && ventasProductos && (
@@ -55,7 +55,7 @@ export default function EstadisticasProductos() {
           <p className="text-2xl mt-4 mb-10">Revisa las ventas de los productos</p>
           
           <div className="flex justify-center">
-            <h3 className="text-3xl font-bold mb-10 border shadow rounded-xl bg-gray-300 p-4 inline-block">Productos Más y Menos Vendidos</h3>
+            <h3 className="text-3xl font-bold mb-10 border shadow rounded-xl bg-gray-300 p-4 inline-block">Productos Más y Menos Vendidos por Mes</h3>
           </div>
 
           <div className="flex mb-10 gap-4 items-center justify-center">

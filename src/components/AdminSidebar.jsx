@@ -18,8 +18,8 @@ export default function AdminSidebar() {
                     <line x1="320" y1="80" x2="380" y2="80" stroke="green"/>
                     <line x1="320" y1="90" x2="380" y2="90" stroke="purple"/>
                 </g>
-                <text x="135" y="75" fontFamily="Arial" fontSize="24" fontWeight="bold" fill="black">PERFUMERÍA</text>
-                <text x="115" y="120" fontFamily="'Dancing Script', cursive" fontSize="40" fill="purple">Mariam</text>
+                <text x="190" y="75" fontFamily="Arial" fontSize="14" fontWeight="bold" fill="black">PERFUMERÍA</text>
+                <text x="110" y="105" fontFamily="'Sacramento', cursive" fontSize="55" fill="purple">Mariam</text>
             </svg>
         </div>
 
@@ -30,6 +30,8 @@ export default function AdminSidebar() {
             <Link to="/admin/ventas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Ventas</Link>
             <Link to="/admin/ventas/estadisticas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Estadisticas Ventas</Link>
             <Link to="/admin/productos/estadisticas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Estadisticas Productos</Link>
+            <Link to="/admin/productos/ofertas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Productos en Oferta</Link>
+            <Link to="/admin/productos/vencimientos" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Vencimientos de Productos</Link>
         </nav>
 
         {/* Boton cerrar sesion de admin */}

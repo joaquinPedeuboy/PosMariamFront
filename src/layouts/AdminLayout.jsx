@@ -19,6 +19,8 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
+    maxHeight: "100vh", // Limita la altura de la modal
+    overflowY: "auto", // Permite el scroll si el contenido es demasiado grande
   },
 };
 
@@ -48,10 +50,10 @@ export default function AdminLayout() {
   return (
     <>
       {loading ? (
-          <div className="flex justify-center items-center max-h-screen">
+          <div className="fixed inset-0 flex justify-center items-center bg-white">
           <RotatingLines
-            height={200}
-            width={200}
+            height={150}
+            width={150}
             strokeColor="#9700c0"
             ariaLabel="rotating-lines-loading"
             />

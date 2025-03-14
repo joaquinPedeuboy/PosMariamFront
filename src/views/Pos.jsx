@@ -5,12 +5,14 @@ import { useState } from "react";
 import { useEffect } from "react";
 import PosResumen from "../components/PosResumen";
 import { Puff } from "react-loader-spinner";
+import ConfirmarModal from "../components/ConfirmarModal";
 
 export default function Pos() {
     const [terminoBusqueda, setTerminoBusqueda] = useState("");
     const [productosFiltrados, setProductosFiltrados] = useState([]);
-
-    const { handleAgregarProductoPedidoPOS} = useQuiosco();
+    
+    const { handleAgregarProductoPedidoPOS, productoEnOferta, setProductoEnOferta, modalOferta,
+      setModalOferta } = useQuiosco();
 
     const token = localStorage.getItem('AUTH_TOKEN');
 
@@ -68,68 +70,85 @@ export default function Pos() {
       }
     };
 
+    const handleConfirmarOferta = (usarOferta) => {
+        setModalOferta(false);
+        if (productoEnOferta) {
+            handleAgregarProductoPedidoPOS(productoEnOferta, usarOferta);
+            setProductoEnOferta(null);
+        }
+    };
+    
+
     if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
-    <div className="grid grid-flow-col gap-5">
-      <div className="border rounded-lg shadow p-4">
-          
-        <div className="p-8 shadow border bg-gray-300 rounded-lg">
-          <p className="text-bold text-lg text-center font-black">Buscar Productos por nombre o codigo de barras</p>
-          {/* Barra de búsqueda */}
-          <div className="my-5 flex justify-center">
-            <input
-              type="text"
-              placeholder="Buscar productos..."
-              className="w-2/4 p-2 border rounded"
-              value={terminoBusqueda}
-              onChange={handleBusqueda}
-              onKeyPress={handleKeyPress}
-            />
-          </div>
+    <>
+      <ConfirmarModal
+        producto={productoEnOferta}
+        onConfirm={handleConfirmarOferta}
+        onClose={() => setModalOferta(false)}
+      />
+      <div className="grid grid-flow-col gap-5">
+        <div className="border rounded-lg shadow p-4">
+            
+          <div className="p-8 shadow border bg-gray-300 rounded-lg">
+            <p className="text-bold text-lg text-center font-black">Buscar Productos por nombre o codigo de barras</p>
+            {/* Barra de búsqueda */}
+            <div className="my-5 flex justify-center">
+              <input
+                type="text"
+                placeholder="Buscar productos..."
+                className="w-2/4 p-2 border rounded"
+                value={terminoBusqueda}
+                onChange={handleBusqueda}
+                onKeyPress={handleKeyPress}
+              />
+            </div>
 
-          {/* Spinner de carga */}
-          {isLoading && (
-              <div className="flex justify-center items-center h-40">
-                  <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
-              </div>
-          )}
-
-          {!isLoading && data && (
-            <>
-              {/* Resultados de búsqueda */}
-              {terminoBusqueda && (
-                <div className="bg-white shadow rounded p-4">
-                  <h2 className="text-2xl font-bold mb-4">Resultados de búsqueda</h2>
-                  {productosFiltrados.length > 0 ? (
-                    productosFiltrados.map((producto) => (
-                      <div
-                        key={producto.id}
-                        className="flex justify-between items-center p-2 border-b"
-                      >
-                        <p className="font-bold">{producto.nombre}</p>
-                        <button
-                          className="bg-green-500 text-white px-4 py-2 rounded"
-                          onClick={() => handleAgregarProductoPedidoPOS(producto)}
-                        >
-                          Agregar
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No se encontraron productos con ese nombre o codigo de barras.</p>
-                  )}
+            {/* Spinner de carga */}
+            {isLoading && (
+                <div className="flex justify-center items-center h-40">
+                    <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
                 </div>
-              )}
-            </>
-          )}
-          </div>
-      </div>
+            )}
 
-      <aside className="w-full h-screen overflow-y-scroll p-5 rounded border">
-        <PosResumen 
-        />
-      </aside>
-    </div>
+            {!isLoading && data && (
+              <>
+                {/* Resultados de búsqueda */}
+                {terminoBusqueda && (
+                  <div className="bg-white shadow rounded p-4">
+                    <h2 className="text-2xl font-bold mb-4">Resultados de búsqueda</h2>
+                    {productosFiltrados.length > 0 ? (
+                      productosFiltrados.map((producto) => (
+                        <div
+                          key={producto.id}
+                          className="flex justify-between items-center p-2 border-b"
+                        >
+                          <p className="font-bold">{producto.nombre}</p>
+                          <button
+                            className="bg-green-500 text-white px-4 py-2 rounded"
+                            onClick={() => handleAgregarProductoPedidoPOS(producto)}
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No se encontraron productos con ese nombre o codigo de barras.</p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            </div>
+        </div>
+
+        <aside className="w-full h-screen overflow-y-scroll p-5 rounded border">
+          <PosResumen 
+          />
+        </aside>
+      </div>
+    </>
+    
   )
 }

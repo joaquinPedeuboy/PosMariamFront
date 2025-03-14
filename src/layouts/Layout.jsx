@@ -7,7 +7,7 @@ export default function Layout() {
 
   return (
     <>
-      {/* Boton cerrar sesion de admin */}
+      {/* Boton cerrar sesion */}
       <div className="flex justify-end my-5 px-5">
             <button
                 type="button"
@@ -28,8 +28,8 @@ export default function Layout() {
                     <line x1="320" y1="80" x2="380" y2="80" stroke="green"/>
                     <line x1="320" y1="90" x2="380" y2="90" stroke="purple"/>
                 </g>
-                <text x="135" y="75" fontFamily="Arial" fontSize="24" fontWeight="bold" fill="black">PERFUMERÍA</text>
-                <text x="115" y="120" fontFamily="'Dancing Script', cursive" fontSize="40" fill="purple">Mariam</text>
+                <text x="190" y="75" fontFamily="Arial" fontSize="14" fontWeight="bold" fill="black">PERFUMERÍA</text>
+                <text x="110" y="105" fontFamily="'Sacramento', cursive" fontSize="55" fill="purple">Mariam</text>
             </svg>
         <main className='p-10 w-full'>
           <Outlet />
