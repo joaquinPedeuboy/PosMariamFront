@@ -88,7 +88,7 @@ export default function Pos() {
         onConfirm={handleConfirmarOferta}
         onClose={() => setModalOferta(false)}
       />
-      <div className="grid grid-flow-col gap-5">
+      <div className="lg:grid lg:grid-flow-col md:gap-5 flex flex-col">
         <div className="border rounded-lg shadow p-4">
             
           <div className="p-8 shadow border bg-gray-300 rounded-lg">

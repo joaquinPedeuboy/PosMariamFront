@@ -61,10 +61,10 @@ export default function AdminLayout() {
         ) : (
     
       <>
-        <div className="md:flex">
+        <div className="lg:flex">
           <AdminSidebar />
           
-          <main className="flex-1 h-screen overflow-y-scroll bg-gray-100 p-10">
+          <main className="flex-1 h-screen overflow-y-scroll bg-gray-100 lg:p-2">
           <Outlet />
           </main>
         </div>

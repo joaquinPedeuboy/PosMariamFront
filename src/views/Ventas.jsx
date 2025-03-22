@@ -47,13 +47,13 @@ export default function Ventas() {
             {/* Barra de búsqueda */}
             <div className="border shadow-sm rounded-md p-5 mb-5 bg-gray-300">
                 <h3 className="font-bold text-md">Buscar tus ventas:</h3>
-                <div className="flex justify-evenly mt-3">
+                <div className="flex flex-col md:flex md:flex-row md:justify-evenly md:mt-3">
                     <input
                         type="date"
                         name="fecha"
                         value={filtros.fecha}
                         onChange={handleFiltroChange}
-                        className="border mt-1 w-2/12 p-3 bg-gray-50"
+                        className="border mt-1 w-auto md:w-2/12 p-3 bg-gray-50"
                     />
                     <input
                         type="number"
@@ -61,11 +61,11 @@ export default function Ventas() {
                         value={filtros.total}
                         onChange={handleFiltroChange}
                         placeholder="Filtrar por total"
-                        className="border mt-1 w-2/12 p-3 bg-gray-50"
+                        className="border mt-1 w-auto md:w-2/12 p-3 bg-gray-50"
                     />
                     <button
                         onClick={buscarConFiltros}
-                        className="bg-amber-400 hover:bg-amber-600 text-white rounded w-2/12 text-xl"
+                        className="bg-amber-400 hover:bg-amber-600 text-white rounded w-auto md:w-2/12 text-xl p-3 md:p-0 mt-2 md:mt-0"
                     >
                         Buscar
                     </button>
@@ -82,7 +82,7 @@ export default function Ventas() {
             {/* Resultados */}
             {!isLoading && data && (
                 <>
-                    <div className="grid grid-cols-3 gap-5">
+                    <div className="md:grid md:grid-cols-3 md:gap-5">
                         {data.data.map((venta) => (
                             <div key={venta.id} className="p-5 bg-white shadow space-y-2 border-b mb-2">
                                 <p className="text-xl font-bold text-slate-600">Contenido de la Venta:</p>
@@ -115,7 +115,7 @@ export default function Ventas() {
 
                     {/* Controles de paginación */}
                     {data.meta && (
-                        <div className="flex justify-evenly mt-5 p-5">
+                        <div className="flex justify-evenly mt-5 p-5 items-center">
                             <button
                                 onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
                                 disabled={data.meta.current_page === 1}

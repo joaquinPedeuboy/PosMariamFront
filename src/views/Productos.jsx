@@ -54,11 +54,11 @@ export default function Productos() {
 
     return (
     <>
-        <div>
+        <div className='lg:flex lg:flex-col'>
             <h1 className='text-4xl font-black'>Productos</h1>
             <p className='text-2xl my-10'>Maneja tus productos desde aquí</p>
 
-            <div className='flex justify-end gap-3'>
+            <div className='flex flex-col justify-center m-5 gap-5 md:flex md:flex-row md:justify-end md:m-0 lg:gap-3'>
                 <button
                     className='flex items-center mb-5 p-2 gap-1 text-center text-lg bg-green-500 hover:bg-green-800 text-white rounded-lg'
                     onClick={()=> {
@@ -85,7 +85,7 @@ export default function Productos() {
             </div>
 
             {/* Barra de búsqueda */}
-            <div className="mt-2 mb-4 flex justify-evenly items-center border rounded-xl bg-gray-200 p-4">
+            <div className="flex flex-col mt-2 mb-4 md:flex md:flex-row md:justify-evenly items-center border rounded-xl bg-gray-200 p-4">
                 {/* <h3 className='font-bold text-2xl'>Buscar Productos:</h3> */}
                 <input
                 type="text"
@@ -93,12 +93,12 @@ export default function Productos() {
                 value={inputBusqueda}
                 onChange={(e) => setInputBusqueda(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-2/5 shadow-md p-2 border rounded"
+                className="w-full mb-2 md:mb-0 md:w-2/5 shadow-md p-2 border rounded"
                 />
 
                 <button
                     onClick={handleBuscar}
-                    className="text-lg px-4 py-2 bg-blue-500 hover:bg-blue-800 text-white rounded w-1/6"
+                    className="text-lg px-4 py-2 mt-2 md:mt-0 bg-blue-500 hover:bg-blue-800 text-white rounded w-auto md:w-1/6"
                 >
                     Buscar
                 </button>
@@ -115,7 +115,7 @@ export default function Productos() {
                 {/* Lista de productos */}
                 {!isLoading && data && (
                     <>
-                        <div className="flex flex-col">
+                        <div className="md:flex md:flex-col lg:p-2">
                             {data?.data.length === 0 ? (
                                 <p>No se encontraron productos.</p>
                             ) : (

@@ -5,7 +5,7 @@ export default function AdminSidebar() {
 
     const { logout } = useAuth({middleware: 'auth'});
   return (
-    <aside className="md:w-72 h-screen">
+    <aside className="lg:w-72 lg:h-screen mb-2">
         {/* Imagen logotipo de admin */}
         <div className="flex justify-center items-center w-full p-4">
             <svg viewBox="0 0 400 150" width="100%" height="150px" xmlns="http://www.w3.org/2000/svg">

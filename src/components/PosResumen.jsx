@@ -57,7 +57,7 @@ const comprobarPedido = () => pedido.length === 0;
         <div className="mt-5 flex justify-center">
             <input 
             type="submit"
-            className={`${comprobarPedido() ? 'bg-indigo-100' : 'bg-indigo-600 hover:bg-indigo-800'} px-5 py-2 rounded uppercase font-bold text-white text-center w-2/4 cursor-pointer`}
+            className={`${comprobarPedido() ? 'bg-indigo-100' : 'bg-indigo-600 hover:bg-indigo-800'} px-5 py-2 rounded uppercase font-bold text-white text-center w-auto cursor-pointer`}
             value="Confirmar Venta"
             disabled={comprobarPedido()}
             />

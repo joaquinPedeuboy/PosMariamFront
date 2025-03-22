@@ -13,7 +13,7 @@ export default function Productos({producto, mutate}) {
   };
 
   return (
-    <div className="flex justify-between border p-2 shadow bg-white gap-4">
+    <div className="sm:flex sm:flex-col md:flex md:flex-row md:justify-between border p-2 shadow bg-white gap-1 xl:gap-4">
       <ul className="w-full">
         <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">Producto</p>
         <li className="flex flex-col">
@@ -40,7 +40,7 @@ export default function Productos({producto, mutate}) {
       </ul>
 
       <ul className="w-full">
-        <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">Fecha Vencimiento</p>
+        <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">F.Vencimiento</p>
         <li className="flex flex-col">
         <h3 className="text-xl font-bold text-center mt-1">
           {vencimientos.length > 0
@@ -54,7 +54,7 @@ export default function Productos({producto, mutate}) {
 
       <ul className="w-full">
         <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">Acciones</p>
-        <li className="flex gap-4">
+        <li className="flex gap-2 xl:gap-4">
           <button 
             type="button"
             className="bg-yellow-500 hover:bg-yellow-800 text-white w-full mt-1 p-1 uppercase font-bold"
@@ -70,12 +70,12 @@ export default function Productos({producto, mutate}) {
           >Eliminar</button>
         </li>
       </ul>
-      <ul className="w-1/2">
-        <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">En Muestrario</p>
+      <ul className="sm:w-full md:w-1/2">
+        <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">Muestrario</p>
         <li className="flex">
           <button
             onClick={handleToggleDisponibilidad}
-            className={`text-white w-full mt-1 p-1 uppercase font-bold ${disponible ? "bg-green-500 hover:bg-green-800" : "bg-red-600 hover:bg-red-800"}`}
+            className={`text-white w-full mt-1 p-1 uppercase font-bold text-sm ${disponible ? "bg-green-500 hover:bg-green-800" : "bg-red-600 hover:bg-red-800"}`}
           >
             {disponible ? "Disponible" : "No Disponible"}
           </button>

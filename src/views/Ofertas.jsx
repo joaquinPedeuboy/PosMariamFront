@@ -21,15 +21,13 @@ if (error) return <p className="text-red-500">Error: {error.message}</p>;
         <h1 className='text-4xl font-black'>Productos en Oferta</h1>
         <p className='text-2xl my-10'>Visualiza tus ofertas aquí</p>
         <div className="border shadow-sm rounded-sm bg-white p-5">
-            
+            <h3 className='text-xl font-black text-center mb-4 border p-4 bg-blue-300 font-mono'>Ofertas Disponibles</h3>   
             {/* Spinner de carga */}
             {isLoading && (
                 <div className="flex justify-center items-center h-40">
                     <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
                 </div>
             )}
-
-            <h3 className='text-xl font-black text-center mb-4 border p-4 bg-blue-300 font-mono'>Ofertas Disponibles</h3>   
             {/* Lista de productos en oferta */}
             {!isLoading && data?.data.length > 0 ? (
                 <ul className="flex flex-col items-center list-disc p-5">
