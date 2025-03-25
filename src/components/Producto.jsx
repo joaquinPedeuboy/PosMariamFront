@@ -13,7 +13,7 @@ export default function Productos({producto, mutate}) {
   };
 
   return (
-    <div className="sm:flex sm:flex-col md:flex md:flex-row md:justify-between border p-2 shadow bg-white gap-1 xl:gap-4">
+    <div className="sm:flex sm:flex-col lg:flex lg:flex-row md:justify-between border p-2 shadow bg-white gap-1 xl:gap-4">
       <ul className="w-full">
         <p className="font-bold text-white p-2 border bg-violet-600 text-center rounded-md">Producto</p>
         <li className="flex flex-col">

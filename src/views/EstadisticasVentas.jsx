@@ -75,10 +75,10 @@ export default function EstadisticasVentas() {
             <p className="text-2xl my-10">Revisa las ventas diarias y mensuales</p>
 
             <div className="mb-5">
-                <div className="border shadow p-4 w-auto md:w-1/3 bg-gray-300">
+                <div className="border shadow p-4 w-auto xl:w-1/2 bg-gray-300">
                     <h2 className="font-bold text-xl mb-2">Ventas por dia</h2>
 
-                    <div className="flex gap-4 mb-5 items-center">
+                    <div className="md:flex md:flex-col lg:flex lg:flex-row gap-4 mb-5 items-center">
                         <label>Desde:</label>
                         <input
                             type="date"
@@ -138,10 +138,10 @@ export default function EstadisticasVentas() {
             </div>
 
             <div className="mt-32 mb-20">
-                <div className="border shadow bg-gray-300 p-4 w-auto md:w-1/2 mb-5">
+                <div className="border shadow bg-gray-300 p-4 w-auto mb-5">
                     <h2 className="text-xl font-bold mb-4">Ventas por Mes</h2>
 
-                    <div className="flex gap-4 mb-5 items-center">
+                    <div className="md:flex md:flex-col lg:flex lg:flex-row gap-4 mb-5 items-center">
                         <label>Desde:</label>
                         <input
                             type="month"

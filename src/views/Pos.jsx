@@ -102,6 +102,7 @@ export default function Pos() {
                 value={terminoBusqueda}
                 onChange={handleBusqueda}
                 onKeyPress={handleKeyPress}
+                autoFocus
               />
             </div>
 
