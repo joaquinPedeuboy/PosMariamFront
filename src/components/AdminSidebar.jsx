@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function AdminSidebar() {
 
-    const { logout } = useAuth({middleware: 'auth'});
+    const { logout, user } = useAuth({middleware: 'auth'});
   return (
     <aside className="lg:w-72 mb-2">
         {/* Imagen logotipo de admin */}
@@ -22,7 +22,7 @@ export default function AdminSidebar() {
                 <text x="110" y="105" fontFamily="'Sacramento', cursive" fontSize="55" fill="purple">Mariam</text>
             </svg>
         </div>
-
+        <p className="my-10 text-xl text-center">Hola: {user?.name} {user?.surname}</p>
         {/* Navegacion del admin */}
         <nav className="flex flex-col">
             <Link to="/admin" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Pos</Link>
