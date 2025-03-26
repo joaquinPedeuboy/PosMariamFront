@@ -39,9 +39,9 @@ export default function Vencimientos() {
 
         const diferenciaMeses = (año - añoActual) * 12 + (mes - mesActual);
 
-        if (diferenciaMeses < 0) return "text-red-600 font-bold"; // Ya venció
-        if (diferenciaMeses === 0) return "text-red-600 font-bold"; // Vence este mes
-        if (diferenciaMeses < 3) return "text-orange-500 font-semibold"; // Vence en 1 o 2 meses
+        if (diferenciaMeses <= 0) return "text-red-800 font-bold"; // Ya venció
+        if (diferenciaMeses <= 4) return "text-orange-500 font-semibold"; // Vence en 1 o 3 meses
+        if (diferenciaMeses < 6) return "text-green-500 font-semibold"; // Vence en 6 meses
         return "text-gray-800"; // No está cerca de vencer
     };
 
@@ -79,16 +79,15 @@ export default function Vencimientos() {
             <p className='text-2xl my-10'>Visualiza tus próximos vencimientos aquí</p>
 
             <div className="border shadow-md rounded-md bg-white p-5">
+                <h3 className='text-xl font-black text-center mb-4 border p-4 bg-red-400 font-serif rounded-lg'>
+                    Productos con vencimientos cercanos
+                </h3>
                 {/* Spinner de carga */}
                 {isLoading && (
                     <div className="flex justify-center items-center h-40">
                         <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
                     </div>
                 )}
-
-                <h3 className='text-xl font-black text-center mb-4 border p-4 bg-red-400 font-serif rounded-lg'>
-                    Productos con vencimientos cercanos
-                </h3>
 
                 {/* Tabla con scroll */}
                 {!isLoading && productosOrdenados.length > 0 ? (

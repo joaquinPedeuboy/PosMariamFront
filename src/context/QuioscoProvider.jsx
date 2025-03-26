@@ -251,21 +251,40 @@ const QuioscoProvider = ({children}) => {
     }
 
     const imprimirTicket = (pedido, total) => {
-        const ventana = window.open("", "PRINT", "height=600,width=400");
+        const ventana = window.open("", "PRINT", "height=1000,width=800");
     
         ventana.document.write(`
             <html>
             <head>
                 <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 10px; }
-                    table { width: 100%; border-collapse: collapse; text-align: left; }
-                    td, th { padding: 6px; border-bottom: 1px solid #ddd; }
-                    th { background-color: #f4f4f4; }
-                    .total { font-weight: bold; text-align: right; margin-top: 10px; }
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0px;
+                        padding: 0px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    td {
+                        margin: 0px;
+                        padding: 6px;
+                        border-bottom: 1px solid #ddd; /* Para una mejor separación */
+
+                    }
+                    th {
+                        margin: 0px;
+                        padding: 6px;
+                        background-color: #f4f4f4; /* Fondo para encabezados */
+                    }
+                    .total {
+                        font-weight: bold;
+                        margin-top: 10px;
+                    }
                 </style>
             </head>
             <body>
-                <h3>Resumen de Venta</h3>
+                <h3 style="text-aling: left;">Resumen de Venta</h3>
                 <table>
                     <thead>
                         <tr>

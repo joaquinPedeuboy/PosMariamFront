@@ -34,6 +34,7 @@ export default function Pos() {
 
     // Actualizar productos filtrados al cambiar el término de búsqueda
     const handleBusqueda = (e) => {
+      console.log("Texto ingresado:", e.target.value);
       const termino = e.target.value.toLowerCase();
       setTerminoBusqueda(termino);
 
@@ -51,24 +52,27 @@ export default function Pos() {
 
     // Detectar "Enter" para agregar producto directamente
     const handleKeyPress = (e) => {
-      if (e.key === "Enter" && terminoBusqueda) {
-          // Buscar un producto que coincida exactamente con el código de barras
+      if (e.key === "Enter") {
+          const codigoIngresado = e.target.value.trim().toLowerCase(); // Tomar el valor actual del input
+
           const productoEncontrado = data.data.find(
               (producto) =>
                   producto.codigo_barras &&
-                  producto.codigo_barras.toLowerCase() ===
-                      terminoBusqueda.toLowerCase()
+                  producto.codigo_barras.toLowerCase() === codigoIngresado
           );
-
+  
           if (productoEncontrado) {
               handleAgregarProductoPedidoPOS(productoEncontrado);
-              setTerminoBusqueda(""); // Limpiar la barra de búsqueda
               setProductosFiltrados(data.data); // Restablecer los productos filtrados
+              setTimeout(() => {
+                setTerminoBusqueda("");
+              }, 1000);
           } else {
               alert("Producto no encontrado.");
           }
       }
     };
+  
 
     const handleConfirmarOferta = (usarOferta) => {
         setModalOferta(false);
@@ -101,7 +105,7 @@ export default function Pos() {
                 className="w-2/4 p-2 border rounded"
                 value={terminoBusqueda}
                 onChange={handleBusqueda}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 autoFocus
               />
             </div>
