@@ -32,13 +32,14 @@ export default function AdminSidebar() {
             <Link to="/admin/productos/estadisticas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Estadisticas Productos</Link>
             <Link to="/admin/productos/ofertas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Productos en Oferta</Link>
             <Link to="/admin/productos/vencimientos" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Vencimientos de Productos</Link>
+            <Link to="/admin/productos/departamentos" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Departamentos de Productos</Link>
         </nav>
 
         {/* Boton cerrar sesion de admin */}
         <div className="my-5 px-5">
             <button
                 type="button"
-                className="text-center bg-red-500 w-full p-3 font-bold text-white truncate"
+                className="text-center bg-red-500 hover:bg-red-800 w-full p-3 font-bold text-white truncate"
                 onClick={logout}
             >
                 Cerrar sesion

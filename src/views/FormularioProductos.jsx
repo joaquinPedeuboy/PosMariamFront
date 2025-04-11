@@ -27,7 +27,7 @@ export default function FormularioProductos({producto}) {
         const fetchDepartamentos = async () => {
             const token = localStorage.getItem("AUTH_TOKEN");
             try {
-                const { data } = await clienteAxios.get("/api/departamentos", {
+                const { data } = await clienteAxios.get("/api/departamentos/all", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setDepartamentos(data);

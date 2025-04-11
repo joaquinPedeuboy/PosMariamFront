@@ -34,7 +34,6 @@ export default function Pos() {
 
     // Actualizar productos filtrados al cambiar el término de búsqueda
     const handleBusqueda = (e) => {
-      console.log("Texto ingresado:", e.target.value);
       const termino = e.target.value.toLowerCase();
       setTerminoBusqueda(termino);
 
@@ -51,27 +50,51 @@ export default function Pos() {
     };
 
     // Detectar "Enter" para agregar producto directamente
-    const handleKeyPress = (e) => {
+    const handleKeyPress = async (e) => {
       if (e.key === "Enter") {
-          const codigoIngresado = e.target.value.trim().toLowerCase(); // Tomar el valor actual del input
-
-          const productoEncontrado = data.data.find(
-              (producto) =>
-                  producto.codigo_barras &&
-                  producto.codigo_barras.toLowerCase() === codigoIngresado
-          );
-  
-          if (productoEncontrado) {
-              handleAgregarProductoPedidoPOS(productoEncontrado);
-              setProductosFiltrados(data.data); // Restablecer los productos filtrados
-              setTimeout(() => {
-                setTerminoBusqueda("");
-              }, 1000);
+        const codigoIngresado = e.target.value.trim();
+        
+        try {
+          const { data } = await clienteAxios.get(`/api/productos/buscar/${codigoIngresado}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          if (data) {
+            handleAgregarProductoPedidoPOS(data);
+            setTerminoBusqueda("");
           } else {
-              alert("Producto no encontrado.");
+            alert("Producto no encontrado.");
           }
+        } catch (error) {
+          console.error("Error al buscar producto:", error);
+          alert("Error al buscar el producto por código de barras.");
+        }
       }
     };
+    
+    // const handleKeyPress = (e) => {
+    //   if (e.key === "Enter") {
+    //       const codigoIngresado = e.target.value.trim().toLowerCase(); // Tomar el valor actual del input
+
+    //       const productoEncontrado = data.data.find(
+    //           (producto) =>
+    //               producto.codigo_barras &&
+    //               producto.codigo_barras.toLowerCase() === codigoIngresado
+    //       );
+  
+    //       if (productoEncontrado) {
+    //           handleAgregarProductoPedidoPOS(productoEncontrado);
+    //           setProductosFiltrados(data.data); // Restablecer los productos filtrados
+    //           setTimeout(() => {
+    //             setTerminoBusqueda("");
+    //           }, 1000);
+    //       } else {
+    //           alert("Producto no encontrado.");
+    //       }
+    //   }
+    // };
   
 
     const handleConfirmarOferta = (usarOferta) => {

@@ -12,6 +12,7 @@ import EstadisticasVentas from "../views/EstadisticasVentas";
 import EstadisticasProductos from "../views/EstadisticasProductos";
 import Ofertas from "../views/Ofertas";
 import Vencimientos from "../views/Vencimientos";
+import Departamentos from "../views/Departamentos";
 
 
 const router = createBrowserRouter([
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/productos/vencimientos',
                 element: <Vencimientos />
+            },
+            {
+                path: '/admin/productos/departamentos',
+                element: <Departamentos />
             }
         ]
     }

@@ -173,82 +173,162 @@ const QuioscoProvider = ({children}) => {
     
 
     // Agregar productos al carrito POS
+    // const handleAgregarProductoPedidoPOS = async (producto, usarOferta = null) => {
+    //     const token = localStorage.getItem('AUTH_TOKEN');
+    //     try {
+    //             // Obtener los vencimiento
+    //             const { data: vencimientos } = await clienteAxios.get(`/api/productos/${producto.id}/vencimientos`, {
+    //                 headers: { Authorization: `Bearer ${token}` },
+    //             });
+
+    //             // Obtener las ofertas
+    //             const { data } = await clienteAxios.get(`/api/productos/${producto.id}/oferta`, {
+    //                 headers: { Authorization: `Bearer ${token}` },
+    //             });
+
+    //             const oferta = data.ofertas || null;
+
+    //             // Verificar si hay stock disponible
+    //             if (!oferta && vencimientos.length === 0) {
+    //                 toast.error("No hay stock disponible para este producto.");
+    //                 return;
+    //             }
+
+    //             // Preguntar si se quiere usar la oferta (si existe)
+    //             if (oferta && usarOferta === null) {
+    //                 setProductoEnOferta(producto);
+    //                 setModalOferta(true);
+    //                 return;
+    //             }        
+
+    //             // Ordenar los vencimientos por fecha
+    //             vencimientos.sort((a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento));
+
+    //             // Buscar si el producto ya está en el pedido
+    //             const productoExistente = pedido.find((item) => item.id === producto.id && item.usarOferta === usarOferta);
+
+    //             if (productoExistente) {
+    //                 setPedido((prevPedido) =>
+    //                     prevPedido.map((item) =>
+    //                         item.id === producto.id && item.usarOferta === usarOferta
+    //                             ? {
+    //                                 ...item,
+    //                                 usarOferta,
+    //                                 ofertas: usarOferta ? { ...oferta, cantidad: item.cantidad + 1 } // Asegurar que la cantidad se incremente correctamente
+    //                                 : null,
+    //                                 precio: usarOferta ? oferta.precio_oferta : producto.precio,
+    //                                 subtotal: usarOferta ? oferta.precio_oferta * item.cantidad : producto.precio * item.cantidad,
+    //                                 vencimientos: usarOferta
+    //                                     ? [] // Si es oferta, no se usan vencimientos
+    //                                     : item.vencimientos.map((v, index) =>
+    //                                         index === 0 ? { ...v, cantidad: v.cantidad + 1 } : v
+    //                                     )
+    //                             }
+    //                             : item
+    //                     )
+    //                 );
+    //             } else {
+    //                 setPedido([
+    //                     ...pedido,
+    //                     {
+    //                         ...producto,
+    //                         uniqueId: `${producto.id}-${Date.now()}`,
+    //                         usarOferta,
+    //                         ofertas: usarOferta
+    //                         ? { ...oferta, cantidad: 1 } // Asignar solo 1 unidad en oferta
+    //                         : null,
+    //                         precio: usarOferta ? oferta.precio_oferta : producto.precio,
+    //                         subtotal: usarOferta ? oferta.precio_oferta * 1 : producto.precio * 1,
+    //                         vencimientos: usarOferta ? [] : [{ ...vencimientos[0], cantidad: 1 }]
+    //                     },
+    //                 ]);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error al obtener los datos del producto", error);
+    //         }
+    // }
     const handleAgregarProductoPedidoPOS = async (producto, usarOferta = null) => {
         const token = localStorage.getItem('AUTH_TOKEN');
         try {
-                // Obtener los vencimiento
-                const { data: vencimientos } = await clienteAxios.get(`/api/productos/${producto.id}/vencimientos`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                // Obtener las ofertas
-                const { data } = await clienteAxios.get(`/api/productos/${producto.id}/oferta`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                const oferta = data.ofertas || null;
-
-                console.log("Oferta recibida:", oferta);
-
-                // Verificar si hay stock disponible
-                if (!oferta && vencimientos.length === 0) {
-                    toast.error("No hay stock disponible para este producto.");
-                    return;
-                }
-
-                // Preguntar si se quiere usar la oferta (si existe)
-                if (oferta && usarOferta === null) {
-                    setProductoEnOferta(producto);
-                    setModalOferta(true);
-                    return;
-                }        
-
-                // Ordenar los vencimientos por fecha
-                vencimientos.sort((a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento));
-
-                // Buscar si el producto ya está en el pedido
-                const productoExistente = pedido.find((item) => item.id === producto.id && item.usarOferta === usarOferta);
-
-                if (productoExistente) {
-                    setPedido((prevPedido) =>
-                        prevPedido.map((item) =>
-                            item.id === producto.id && item.usarOferta === usarOferta
-                                ? {
-                                    ...item,
-                                    usarOferta,
-                                    ofertas: usarOferta ? { ...oferta, cantidad: item.cantidad + 1 } // Asegurar que la cantidad se incremente correctamente
-                                    : null,
-                                    precio: usarOferta ? oferta.precio_oferta : producto.precio,
-                                    subtotal: usarOferta ? oferta.precio_oferta * item.cantidad : producto.precio * item.cantidad,
-                                    vencimientos: usarOferta
-                                        ? [] // Si es oferta, no se usan vencimientos
-                                        : item.vencimientos.map((v, index) =>
-                                            index === 0 ? { ...v, cantidad: v.cantidad + 1 } : v
-                                        )
-                                }
-                                : item
-                        )
-                    );
-                } else {
-                    setPedido([
-                        ...pedido,
-                        {
-                            ...producto,
-                            uniqueId: `${producto.id}-${Date.now()}`,
-                            usarOferta,
-                            ofertas: usarOferta
-                            ? { ...oferta, cantidad: 1 } // Asignar solo 1 unidad en oferta
-                            : null,
-                            precio: usarOferta ? oferta.precio_oferta : producto.precio,
-                            subtotal: usarOferta ? oferta.precio_oferta * 1 : producto.precio * 1,
-                            vencimientos: usarOferta ? [] : [{ ...vencimientos[0], cantidad: 1 }]
-                        },
-                    ]);
-                }
-            } catch (error) {
-                console.error("Error al obtener los datos del producto", error);
-            }
-    }
+          let productoOptimizado = producto;
+          // Si el producto no trae las relaciones (por ejemplo, viene de la búsqueda general)
+          // realizamos una llamada al endpoint optimizado para obtener las relaciones.
+          if (!producto.vencimientos || !producto.ofertas) {
+            const { data: productoData } = await clienteAxios.get(`/api/productos/buscar/${producto.codigo_barras}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            productoOptimizado = productoData;
+          }
+      
+          // Ordenamos los vencimientos por fecha
+          const vencimientos = productoOptimizado.vencimientos?.sort(
+            (a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento)
+          ) || [];
+      
+          // Validamos stock: si no hay oferta y tampoco vencimientos, no hay stock
+          if (!productoOptimizado.ofertas && vencimientos.length === 0) {
+            toast.error("No hay stock disponible para este producto.");
+            return;
+          }
+      
+          // Si existe oferta y aún no se define si usarla, mostramos el modal para elegir
+          if (productoOptimizado.ofertas && usarOferta === null) {
+            setProductoEnOferta(productoOptimizado);
+            setModalOferta(true);
+            return;
+          }
+      
+          // Verificamos si el producto ya está en el pedido
+          const productoExistente = pedido.find(
+            (item) => item.id === productoOptimizado.id && item.usarOferta === usarOferta
+          );
+      
+          if (productoExistente) {
+            // Actualizamos el producto existente, incrementando cantidad
+            setPedido((prevPedido) =>
+              prevPedido.map((item) =>
+                item.id === productoOptimizado.id && item.usarOferta === usarOferta
+                  ? {
+                      ...item,
+                      // Si se usa oferta, incrementamos la cantidad en la propiedad de oferta
+                      // Si no, actualizamos la cantidad en el primer vencimiento
+                      ...(usarOferta
+                        ? {
+                            ofertas: { ...productoOptimizado.ofertas, cantidad: item.ofertas.cantidad + 1 },
+                            subtotal: productoOptimizado.ofertas.precio_oferta * (item.ofertas.cantidad + 1),
+                          }
+                        : {
+                            vencimientos: item.vencimientos.map((v, index) =>
+                              index === 0 ? { ...v, cantidad: v.cantidad + 1 } : v
+                            ),
+                            subtotal: productoOptimizado.precio * (item.vencimientos[0].cantidad + 1),
+                          }),
+                    }
+                  : item
+              )
+            );
+          } else {
+            // Agregamos el producto nuevo al pedido
+            setPedido([
+              ...pedido,
+              {
+                ...productoOptimizado,
+                uniqueId: `${productoOptimizado.id}-${Date.now()}`,
+                usarOferta,
+                // Si se usa oferta, configuramos la cantidad en 1 y el precio de oferta
+                ofertas: usarOferta ? { ...productoOptimizado.ofertas, cantidad: 1 } : null,
+                // Si no se usa oferta, asignamos el precio normal y el primer vencimiento con cantidad 1
+                precio: usarOferta ? productoOptimizado.ofertas.precio_oferta : productoOptimizado.precio,
+                subtotal: usarOferta ? productoOptimizado.ofertas.precio_oferta : productoOptimizado.precio,
+                vencimientos: usarOferta ? [] : [{ ...vencimientos[0], cantidad: 1 }],
+              },
+            ]);
+          }
+        } catch (error) {
+          console.error("Error al agregar producto al pedido", error);
+          toast.error("Error al agregar producto. Revisa la consola para más detalles.");
+        }
+      };
 
     const imprimirTicket = (pedido, total) => {
         const ventana = window.open("", "PRINT", "height=1000,width=800");
