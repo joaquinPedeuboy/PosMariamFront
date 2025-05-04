@@ -11,6 +11,7 @@ const QuioscoProvider = ({children}) => {
 
     const [modalCrear, setModalCrear] = useState(false);
     const [modalCrearDepa, setModalCrearDepa] = useState(false);
+    const [modalEditarDepa, setModalEditarDepa] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [producto, setProducto] = useState({});
     const [total, setTotal] = useState([]);
@@ -18,6 +19,7 @@ const QuioscoProvider = ({children}) => {
     const [productoEnOferta, setProductoEnOferta] = useState(null);
     const [modalOferta, setModalOferta] = useState(false);
     const [disponible, setDisponible] = useState(producto.disponible);
+    const [departamento, setDepartamento] = useState([]);
 
     const token = localStorage.getItem('AUTH_TOKEN');
 
@@ -45,8 +47,16 @@ const QuioscoProvider = ({children}) => {
         setModalCrearDepa(!modalCrearDepa);
     }
 
+    const handleClickModalEditarDepartamento = ()=> {
+        setModalEditarDepa(!modalEditarDepa);
+    }
+
     const handleSetProducto = producto => {
         setProducto(producto);
+    }
+
+    const handleSetDepartamento = departamento => {
+        setDepartamento(departamento);
     }
 
     const cambiarDisponibilidad = async (id) => {
@@ -82,32 +92,88 @@ const QuioscoProvider = ({children}) => {
         }
     };
 
+    // Handle elminar departamento
+    const handleEliminarDepartamento = async (id) => {
+        try {
+            await clienteAxios.delete(`/api/departamentos/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success('Departamento Eliminado');
+            mutate('/api/departamentos');
+        } catch (error) {
+            toast.error('Error al eliminar el Departamento');
+            console.error("Error al eliminar Departamento", error);
+        }
+    };
+
+    // const handleEditarCantidadPOS = (uniqueId, nuevaCantidad, usarOferta) => {
+    //     setPedido((pedidoActual) =>
+    //         pedidoActual.map((producto) => {
+    //             if (producto.uniqueId === uniqueId) {
+    //                 if (producto.usarOferta) {
+    //                     return {
+    //                         ...producto,
+    //                         usarOferta,
+    //                         ofertas: { ...producto.ofertas, cantidad: nuevaCantidad },
+    //                     };
+    //                 } else {
+    //                     return {
+    //                         ...producto,
+    //                         vencimientos: producto.vencimientos.map((vencimiento) =>
+    //                             vencimiento.id === producto.vencimientos[0]?.id
+    //                                 ? { ...vencimiento, cantidad: nuevaCantidad }
+    //                                 : vencimiento
+    //                         ),
+    //                     };
+    //                 }
+    //             }
+    //             return producto;
+    //         })
+    //     );
+    // };
     const handleEditarCantidadPOS = (uniqueId, nuevaCantidad, usarOferta) => {
-        setPedido((pedidoActual) =>
-            pedidoActual.map((producto) => {
-                if (producto.uniqueId === uniqueId) {
-                    if (producto.usarOferta) {
-                        return {
-                            ...producto,
-                            usarOferta,
-                            ofertas: { ...producto.ofertas, cantidad: nuevaCantidad },
-                        };
-                    } else {
-                        return {
-                            ...producto,
-                            vencimientos: producto.vencimientos.map((vencimiento) =>
-                                vencimiento.id === producto.vencimientos[0]?.id
-                                    ? { ...vencimiento, cantidad: nuevaCantidad }
-                                    : vencimiento
-                            ),
-                        };
-                    }
-                }
-                return producto;
+        setPedido(pedidoActual =>
+          pedidoActual
+            .map(producto => {
+              // Si no es el producto que estamos editando, lo devolvemos tal cual
+              if (producto.uniqueId !== uniqueId) return producto;
+      
+              // 1) Si estamos editando la oferta…
+              if (producto.usarOferta) {
+                // Actualizamos sólo la cantidad de la oferta
+                return {
+                  ...producto,
+                  usarOferta,
+                  ofertas: { ...producto.ofertas, cantidad: nuevaCantidad },
+                };
+              }
+      
+              // 2) Si no es oferta, es vencimiento: actualizamos el primer vencimiento…
+              const vencimientosActualizados = producto.vencimientos
+                .map((vencimiento, idx) =>
+                  idx === 0
+                    ? { ...vencimiento, cantidad: nuevaCantidad }
+                    : vencimiento
+                )
+                // …y descartamos los que quedaron a 0
+                .filter(v => v.cantidad > 0);
+      
+              // 3) Reconstruimos el producto con los vencimientos limpios
+              return {
+                ...producto,
+                vencimientos: vencimientosActualizados
+              };
+            })
+            // 4) (Opcional) Si quieres borrar el producto por completo cuando se queda sin stock:
+            .filter(producto => {
+              // Si usaba oferta y la cantidad llegó a 0, lo quitamos:
+              if (producto.usarOferta && producto.ofertas.cantidad <= 0) return false;
+              // Si no usaba oferta y ya no tiene vencimientos, lo quitamos:
+              if (!producto.usarOferta && producto.vencimientos.length === 0) return false;
+              return true;
             })
         );
-    };
-    
+      };
 
 
     const handleSubmitNuevaVenta = async () => {
@@ -425,8 +491,10 @@ const QuioscoProvider = ({children}) => {
                 modalCrear,
                 modalEditar,
                 modalCrearDepa,
+                modalEditarDepa,
                 handleClickModalEditarProducto,
                 handleClickModalCrearDepa,
+                handleClickModalEditarDepartamento,
                 producto,
                 total,
                 pedido,
@@ -442,7 +510,10 @@ const QuioscoProvider = ({children}) => {
                 modalOferta,
                 setModalOferta,
                 cambiarDisponibilidad,
-                disponible
+                disponible,
+                departamento,
+                handleSetDepartamento,
+                handleEliminarDepartamento,
             }}
         >{children}</QuioscoContext.Provider>
     )

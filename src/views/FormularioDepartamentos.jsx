@@ -3,10 +3,11 @@ import { useState } from "react";
 import useQuiosco from "../hooks/useQuiosco";
 import { toast } from "react-toastify";
 
-export default function FormularioDepartamentos() {
+export default function FormularioDepartamentos({departamento}) {
 
-    const { handleClickModalCrearDepa } = useQuiosco();
-    const [nombre, setNombre] = useState("");
+    const { handleClickModalCrearDepa, handleClickModalEditarDepartamento } = useQuiosco();
+    const [nombre, setNombre] = useState(departamento?.nombre || "");
+    const [errores, setErrores] = useState({});
     const token = localStorage.getItem("AUTH_TOKEN");
 
     const handleSubmit = async (e) => {
@@ -15,19 +16,38 @@ export default function FormularioDepartamentos() {
         const datos = { nombre };
 
         try {
-            // Crear departamento
-            await clienteAxios.post(`/api/departamentos/create`, datos , {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            toast.success("Departamento creado correctamente");
-            handleClickModalCrearDepa();
-        } catch (error) {
-            if (error.response && error.response.status === 422) {
-                toast.error(error.response.data.errors.nombre[0]); // Muestra el primer error
+            // Actualizar o crear
+            if(departamento?.id){
+                // Actualizar depa
+                const response = await clienteAxios.put(`/api/departamentos/${departamento.id}`, datos, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+                
+                console.log("Respuesta del servidor:", response.data);
+                toast.success("Departamento actualizado correctamente");
+                handleClickModalEditarDepartamento();
             } else {
-                toast.error("Error al crear el departamento");
+                // Crear departamento
+                await clienteAxios.post(`/api/departamentos/create`, datos , {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                toast.success("Departamento creado correctamente");
+                handleClickModalCrearDepa();
+            }
+            
+        } catch (error) {
+            console.error("Error al guardar depto:", error.response || error);
+            if (error.response?.status === 422 && error.response.data.errors) {
+                setErrores(error.response.data.errors);
+                Object.values(error.response.data.errors)
+                .flat()
+                .forEach(msg => toast.error(msg));
+            } else {
+                toast.error("Error al guardar el departamento");
             }
         }
     }
@@ -48,10 +68,15 @@ export default function FormularioDepartamentos() {
                         onChange={(e) => setNombre(e.target.value)}
                         className="border mt-1 w-full p-3 bg-gray-50"
                     />
+                    {errores.nombre && (
+                        <p className="text-red-600 text-sm mt-1">
+                        {errores.nombre.join(", ")}
+                        </p>
+                    )}
             </div>
 
             <button type="submit" className="bg-blue-500 hover:bg-blue-800 px-5 py-2 mt-5 text-white font-bold uppercase rounded">
-                Crear Departamento
+                {departamento?.id ? "Actualizar Departamento" : "Crear Departamento"}
             </button>
         </div>
         

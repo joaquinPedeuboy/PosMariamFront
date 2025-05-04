@@ -10,6 +10,7 @@ import ModalCrearProducto from "../components/ModalCrearProducto";
 import ModalCrearDepa from "../components/ModalCrearDepa";
 import { useAuth } from "../hooks/useAuth";
 import { RotatingLines } from 'react-loader-spinner'
+import ModalEditarDepa from "../components/ModalEditarDepa";
 
 const customStyles = {
   content: {
@@ -28,7 +29,7 @@ Modal.setAppElement('#root');
 
 export default function AdminLayout() {
 
-  const { modalEditar, modalCrear, modalCrearDepa } = useQuiosco();
+  const { modalEditar, modalCrear, modalCrearDepa, modalEditarDepa } = useQuiosco();
   const { user, error, isLoading } = useAuth({middleware: 'admin'});
   const [loading, setLoading] = useState(true);
 
@@ -79,6 +80,10 @@ export default function AdminLayout() {
 
         <Modal isOpen={modalCrearDepa} style={customStyles}>
           <ModalCrearDepa />
+        </Modal>
+
+        <Modal isOpen={modalEditarDepa} style={customStyles}>
+          <ModalEditarDepa />
         </Modal>
 
         <ToastContainer />
