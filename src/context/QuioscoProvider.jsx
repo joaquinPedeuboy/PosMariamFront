@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react"
 import clienteAxios from "../config/axios";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
-import { formatearDinero } from "../helpers";
 
 
 const QuioscoContext = createContext();
@@ -178,7 +177,6 @@ const QuioscoProvider = ({children}) => {
 
     const handleSubmitNuevaVenta = async () => {
         const token = localStorage.getItem('AUTH_TOKEN');
-        console.log(pedido)
         try {
             
             const {data} = await clienteAxios.post('/api/ventas', {
@@ -203,9 +201,6 @@ const QuioscoProvider = ({children}) => {
                 }
             });
             
-    
-            console.log("Respuesta del servidor:", data);
-    
             toast.success('Venta realizada correctamente');
     
             // 💡 Verificar si respuesta.data.venta existe antes de intentar imprimir el ticket
@@ -237,99 +232,21 @@ const QuioscoProvider = ({children}) => {
         }
     };
     
-
-    // Agregar productos al carrito POS
-    // const handleAgregarProductoPedidoPOS = async (producto, usarOferta = null) => {
-    //     const token = localStorage.getItem('AUTH_TOKEN');
-    //     try {
-    //             // Obtener los vencimiento
-    //             const { data: vencimientos } = await clienteAxios.get(`/api/productos/${producto.id}/vencimientos`, {
-    //                 headers: { Authorization: `Bearer ${token}` },
-    //             });
-
-    //             // Obtener las ofertas
-    //             const { data } = await clienteAxios.get(`/api/productos/${producto.id}/oferta`, {
-    //                 headers: { Authorization: `Bearer ${token}` },
-    //             });
-
-    //             const oferta = data.ofertas || null;
-
-    //             // Verificar si hay stock disponible
-    //             if (!oferta && vencimientos.length === 0) {
-    //                 toast.error("No hay stock disponible para este producto.");
-    //                 return;
-    //             }
-
-    //             // Preguntar si se quiere usar la oferta (si existe)
-    //             if (oferta && usarOferta === null) {
-    //                 setProductoEnOferta(producto);
-    //                 setModalOferta(true);
-    //                 return;
-    //             }        
-
-    //             // Ordenar los vencimientos por fecha
-    //             vencimientos.sort((a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento));
-
-    //             // Buscar si el producto ya está en el pedido
-    //             const productoExistente = pedido.find((item) => item.id === producto.id && item.usarOferta === usarOferta);
-
-    //             if (productoExistente) {
-    //                 setPedido((prevPedido) =>
-    //                     prevPedido.map((item) =>
-    //                         item.id === producto.id && item.usarOferta === usarOferta
-    //                             ? {
-    //                                 ...item,
-    //                                 usarOferta,
-    //                                 ofertas: usarOferta ? { ...oferta, cantidad: item.cantidad + 1 } // Asegurar que la cantidad se incremente correctamente
-    //                                 : null,
-    //                                 precio: usarOferta ? oferta.precio_oferta : producto.precio,
-    //                                 subtotal: usarOferta ? oferta.precio_oferta * item.cantidad : producto.precio * item.cantidad,
-    //                                 vencimientos: usarOferta
-    //                                     ? [] // Si es oferta, no se usan vencimientos
-    //                                     : item.vencimientos.map((v, index) =>
-    //                                         index === 0 ? { ...v, cantidad: v.cantidad + 1 } : v
-    //                                     )
-    //                             }
-    //                             : item
-    //                     )
-    //                 );
-    //             } else {
-    //                 setPedido([
-    //                     ...pedido,
-    //                     {
-    //                         ...producto,
-    //                         uniqueId: `${producto.id}-${Date.now()}`,
-    //                         usarOferta,
-    //                         ofertas: usarOferta
-    //                         ? { ...oferta, cantidad: 1 } // Asignar solo 1 unidad en oferta
-    //                         : null,
-    //                         precio: usarOferta ? oferta.precio_oferta : producto.precio,
-    //                         subtotal: usarOferta ? oferta.precio_oferta * 1 : producto.precio * 1,
-    //                         vencimientos: usarOferta ? [] : [{ ...vencimientos[0], cantidad: 1 }]
-    //                     },
-    //                 ]);
-    //             }
-    //         } catch (error) {
-    //             console.error("Error al obtener los datos del producto", error);
-    //         }
-    // }
     const handleAgregarProductoPedidoPOS = async (producto, usarOferta = null) => {
         const token = localStorage.getItem('AUTH_TOKEN');
         try {
           let productoOptimizado = producto;
           // Si el producto no trae las relaciones (por ejemplo, viene de la búsqueda general)
           // realizamos una llamada al endpoint optimizado para obtener las relaciones.
-          if (!producto.vencimientos || !producto.ofertas) {
-            const { data: productoData } = await clienteAxios.get(`/api/productos/buscar/${producto.codigo_barras}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            productoOptimizado = productoData;
-          }
+        //   if (!producto.vencimientos || !producto.ofertas) {
+        //     const { data: productoData } = await clienteAxios.get(`/api/productos/buscar/${producto.codigo_barras}`, {
+        //       headers: { Authorization: `Bearer ${token}` }
+        //     });
+        //     productoOptimizado = productoData;
+        //   }
       
           // Ordenamos los vencimientos por fecha
-          const vencimientos = productoOptimizado.vencimientos?.sort(
-            (a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento)
-          ) || [];
+          const vencimientos = productoOptimizado.vencimientos || [];
       
           // Validamos stock: si no hay oferta y tampoco vencimientos, no hay stock
           if (!productoOptimizado.ofertas && vencimientos.length === 0) {

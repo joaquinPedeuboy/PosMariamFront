@@ -43,17 +43,15 @@ export default function FormularioProductos({producto}) {
     useEffect(() => {
         const fetchProductoData = async () => {
             if (producto?.id) {
-                console.log("Solicitando producto con ID:", producto.id);
+                
                 try {
                     // Obtener los detalles del producto
                     const { data } = await clienteAxios.get(`/api/productos/${producto.id}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
-                    console.log("Respuesta de la API:", data.producto.vencimientos);
     
                     // Cargar los vencimientos
                     setFechaVencimiento(data.producto.vencimientos || [{ fecha_vencimiento: "", cantidad: 0 }]);
-                    console.log("producto cargado:", data.producto.vencimientos);
                      // Verificar y cargar la oferta
                      if (data.producto.ofertas) {
                         setTieneOferta(true);
@@ -110,7 +108,6 @@ export default function FormularioProductos({producto}) {
             } : null,  
         };
         
-        console.log("FormData antes de enviar:", datos);
 
         try {
 
@@ -123,8 +120,6 @@ export default function FormularioProductos({producto}) {
                             // 'Content-Type': 'multipart/form-data',
                         }
                     })
-                    
-                    console.log("Respuesta del servidor:", response.data);
                     toast.success("Producto actualizado correctamente");
                     handleClickModalEditarProducto(); // Cerrar modal después de la operación
             } else {

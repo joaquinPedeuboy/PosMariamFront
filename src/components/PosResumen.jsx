@@ -25,7 +25,7 @@ const comprobarPedido = () => pedido.length === 0;
         </p>
         <div className="py-10">
         {pedido.length === 0 ? (
-            <p className="text-center text-2xl">
+            <p className="text-center text-2xl text-gray-600">
             No hay elementos en tu venta aun
             </p>
         ) : (
@@ -44,7 +44,7 @@ const comprobarPedido = () => pedido.length === 0;
               })
             )}
         </div>
-        <p className="text-xl mt-6">
+        <p className="text-xl mt-6 font-black">
         Total a vender: {''}
         {formatearDinero(total)}
         </p>

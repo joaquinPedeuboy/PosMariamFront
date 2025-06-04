@@ -61,7 +61,7 @@ return (
                 </button>
 
             </div>
-            <p className="text-lg font-bold text-amber-500">
+            <p className="text-lg font-bold text-green-700">
                 Precio: {formatearDinero(precio)}
             </p>
             <p className="text-lg text-gray-700">
