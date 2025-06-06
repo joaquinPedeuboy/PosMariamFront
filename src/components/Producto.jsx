@@ -1,5 +1,6 @@
 import { formatearDinero } from "../helpers"
 import useQuiosco from '../hooks/useQuiosco';
+import Swal from "sweetalert2";
 
 export default function Productos({producto, mutate}) {
   
@@ -11,6 +12,23 @@ export default function Productos({producto, mutate}) {
     await cambiarDisponibilidad(id); 
     mutate();
   };
+
+  const ConfirmarEliminar = () => {
+      Swal.fire({
+      title: "¿Eliminar producto?",
+      text: `Estás por eliminar "${nombre}". Esta acción no se puede deshacer.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Si, Eliminar",
+      cancelButtonText: "Cancelar"
+      }).then((result) => {
+      if (result.isConfirmed) {
+        handleEliminarProducto(id);
+      }
+  });
+  }
 
   return (
     <div className="sm:flex sm:flex-col lg:flex lg:flex-row md:justify-between border p-2 shadow bg-white gap-1 xl:gap-4">
@@ -66,7 +84,7 @@ export default function Productos({producto, mutate}) {
           <button 
             type="button"
             className="bg-red-600 hover:bg-red-800 text-white w-full mt-1 p-1 uppercase font-bold"
-            onClick={()=> handleEliminarProducto(id)}
+            onClick={ConfirmarEliminar}
           >Eliminar</button>
         </li>
       </ul>

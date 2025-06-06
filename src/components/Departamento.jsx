@@ -1,10 +1,28 @@
 import useQuiosco from "../hooks/useQuiosco";
+import Swal from "sweetalert2";
 
 export default function Departamento({ departamento }) {
 
   const { handleClickModalEditarDepartamento, handleSetDepartamento, handleEliminarDepartamento } = useQuiosco();
 
   const { id, nombre } = departamento;
+
+  const ConfirmarEliminar = () => {
+      Swal.fire({
+      title: "¿Eliminar departamento?",
+      text: `Estás por eliminar "${nombre}". Esta acción no se puede deshacer.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Si, Eliminar",
+      cancelButtonText: "Cancelar"
+      }).then((result) => {
+      if (result.isConfirmed) {
+        handleEliminarDepartamento(id);
+      }
+  });
+  }
 
     return (
       <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4
@@ -26,7 +44,7 @@ export default function Departamento({ departamento }) {
           <button
             type="button"
             className="bg-red-600 hover:bg-red-800 text-white w-full lg:w-1/2 md:w-1/8 p-2 uppercase font-bold"
-            onClick={()=> handleEliminarDepartamento(id)}
+            onClick={ConfirmarEliminar}
           >
             Eliminar
           </button>

@@ -1,163 +1,229 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import useSWR from 'swr';
 import clienteAxios from '../config/axios';
 import { Puff } from "react-loader-spinner";
+import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
 export default function Vencimientos() {
     const token = localStorage.getItem("AUTH_TOKEN");
+    const [filtroMes, setFiltroMes] = useState("");
+    const [paginaActual, setPaginaActual] = useState(1);
+    const itemsPorPagina = 100;
 
-    // Fetch de productos con vencimientos
     const fetcher = (url) => clienteAxios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
     }).then((res) => res.data);
 
-    const { data, error, isLoading } = useSWR('/api/productos?vencimientos=true', fetcher, { refreshInterval: 10000 });
+    const params = new URLSearchParams({
+        vencimientos: 'true',
+        per_page: itemsPorPagina,
+        page: paginaActual,
+        ...(filtroMes && { mes: filtroMes })
+    }).toString();
 
-    // Paginación
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // Número de productos por página
+    const { data, error, isLoading } = useSWR(
+        `/api/productos?${params}`, 
+        fetcher,
+        { refreshInterval: 10000 });
 
     if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
     const productos = data?.data || [];
-    const totalPages = Math.ceil(productos.length / itemsPerPage);
+    const meta = data?.meta  || {};
 
-    // Obtener productos de la página actual
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentProducts = productos.slice(indexOfFirstItem, indexOfLastItem);
+    useEffect(() => {
+    setPaginaActual(1);
+    }, [filtroMes]);
 
-    // Función para determinar el color del vencimiento
+    const irAPagina = n => {
+        if (n < 1 || n > meta.last_page) return;
+        setPaginaActual(n);
+    };
+
+
+    /** Retorna la clase de texto según la cercanía del vencimiento */
     const obtenerColorVencimiento = (fecha) => {
-        if (!fecha) return "text-gray-800"; // Si no hay fecha, mantener gris
-
+        if (!fecha) return "text-gray-800";
         const hoy = new Date();
-        const [año, mes] = fecha.split("-").map(Number); // Extraemos año y mes
+        const [año, mes] = fecha.split("-").map(Number);
+        const diferenciaMeses = (año - hoy.getFullYear()) * 12 + (mes - (hoy.getMonth() + 1));
 
-        const añoActual = hoy.getFullYear();
-        const mesActual = hoy.getMonth() + 1; // `getMonth()` devuelve 0-11, sumamos 1
-
-        const diferenciaMeses = (año - añoActual) * 12 + (mes - mesActual);
-
-        if (diferenciaMeses < 0) return "text-red-600 font-bold"; // Ya venció
-        if (diferenciaMeses === 0) return "text-red-600 font-bold"; // Vence este mes
-        if (diferenciaMeses < 3) return "text-orange-500 font-semibold"; // Vence en 1 o 2 meses
-        return "text-gray-800"; // No está cerca de vencer
+        if (diferenciaMeses <= 0) return "text-red-600";
+        if (diferenciaMeses < 3) return "text-orange-500";
+        return "text-green-700";
     };
 
-    // Función para obtener el vencimiento más cercano y ordenarlo
-    const ordenarPorVencimiento = (productos) => {
-        return productos.sort((a, b) => {
-            const vencimientoA = a.vencimientos.length > 0 ? a.vencimientos.sort((v1, v2) => {
-                const [año1, mes1] = v1.fecha_vencimiento.split("-").map(Number);
-                const [año2, mes2] = v2.fecha_vencimiento.split("-").map(Number);
-                return año1 !== año2 ? año1 - año2 : mes1 - mes2;
-            })[0] : null;
+    /** Retorna el ícono según la cercanía del vencimiento */
+    const obtenerIcono = (fecha) => {
+        if (!fecha) return null;
+        const hoy = new Date();
+        const [año, mes] = fecha.split("-").map(Number);
+        const diferenciaMeses = (año - hoy.getFullYear()) * 12 + (mes - (hoy.getMonth() + 1));
 
-            const vencimientoB = b.vencimientos.length > 0 ? b.vencimientos.sort((v1, v2) => {
-                const [año1, mes1] = v1.fecha_vencimiento.split("-").map(Number);
-                const [año2, mes2] = v2.fecha_vencimiento.split("-").map(Number);
-                return año1 !== año2 ? año1 - año2 : mes1 - mes2;
-            })[0] : null;
+        if (diferenciaMeses <= 0) return <XCircle className="inline w-4 h-4 text-red-600 ml-1" />;
+        if (diferenciaMeses < 3) return <AlertTriangle className="inline w-4 h-4 text-orange-500 ml-1" />;
+        return <CheckCircle className="inline w-4 h-4 text-green-700 ml-1" />;
+    };
 
-            const fechaA = vencimientoA ? `${vencimientoA.fecha_vencimiento}` : '';
-            const fechaB = vencimientoB ? `${vencimientoB.fecha_vencimiento}` : '';
+    /** Devuelve el vencimiento más cercano (se sigue usando para ordenar y filtrar) */
+    const obtenerVencimientoMasCercano = (vencimientos) => {
+        if (!vencimientos.length) return null;
+        return [...vencimientos].sort((a, b) => {
+            const fechaA = new Date(`${a.fecha_vencimiento}-01`);
+            const fechaB = new Date(`${b.fecha_vencimiento}-01`);
+            return fechaA - fechaB;
+        })[0];
+    };
 
-            if (!fechaA && !fechaB) return 0; // Si no hay vencimientos, no se cambia el orden
-            if (!fechaA) return 1; // Si A no tiene vencimiento, debe ir al final
-            if (!fechaB) return -1; // Si B no tiene vencimiento, debe ir al final
+    // /** Ordena y filtra los productos según el mes seleccionado */
+    // const productosFiltrados = useMemo(() => {
+    //     let ordenados = [...productos].sort((a, b) => {
+    //         const vencA = obtenerVencimientoMasCercano(a.vencimientos);
+    //         const vencB = obtenerVencimientoMasCercano(b.vencimientos);
+    //         const fechaA = vencA ? new Date(`${vencA.fecha_vencimiento}-01`) : null;
+    //         const fechaB = vencB ? new Date(`${vencB.fecha_vencimiento}-01`) : null;
+    //         if (!fechaA && !fechaB) return 0;
+    //         if (!fechaA) return 1;
+    //         if (!fechaB) return -1;
+    //         return fechaA - fechaB;
+    //     });
 
-            return new Date(fechaA) - new Date(fechaB);
+    //     if (filtroMes) {
+    //         ordenados = ordenados.filter((p) => {
+    //             const venc = obtenerVencimientoMasCercano(p.vencimientos);
+    //             return venc?.fecha_vencimiento === filtroMes;
+    //         });
+    //     }
+
+    //     return ordenados;
+    // }, [productos, filtroMes]);
+
+    /** Genera las opciones de meses que aparecen en el <select> */
+    const obtenerOpcionesMeses = () => {
+        const fechas = new Set();
+        productos.forEach(p => {
+            const venc = obtenerVencimientoMasCercano(p.vencimientos);
+            if (venc?.fecha_vencimiento) fechas.add(venc.fecha_vencimiento);
         });
+        return Array.from(fechas).sort();
     };
-
-    const productosOrdenados = ordenarPorVencimiento(productos);
 
     return (
         <div>
             <h1 className='text-4xl font-black'>Vencimientos</h1>
             <p className='text-2xl my-10'>Visualiza tus próximos vencimientos aquí</p>
 
+            {/* FILTRO POR MES */}
+            <div className="mb-4">
+                <label className="block font-semibold mb-2">Filtrar por mes:</label>
+                <select
+                    value={filtroMes}
+                    onChange={(e) => setFiltroMes(e.target.value)}
+                    className="border p-2 rounded"
+                >
+                    <option value="">Todos</option>
+                    {obtenerOpcionesMeses().map((mes) => (
+                        <option key={mes} value={mes}>{mes}</option>
+                    ))}
+                </select>
+            </div>
+
             <div className="border shadow-md rounded-md bg-white p-5">
-                {/* Spinner de carga */}
-                {isLoading && (
+                <h3 className='text-xl font-black text-center mb-4 border p-4 bg-red-400 font-serif rounded-lg'>
+                    Productos con vencimientos
+                </h3>
+
+                {isLoading ? (
                     <div className="flex justify-center items-center h-40">
                         <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
                     </div>
-                )}
-
-                <h3 className='text-xl font-black text-center mb-4 border p-4 bg-red-400 font-serif rounded-lg'>
-                    Productos con vencimientos cercanos
-                </h3>
-
-                {/* Tabla con scroll */}
-                {!isLoading && productosOrdenados.length > 0 ? (
-                    <div className="overflow-x-auto max-h-96 border rounded-lg">
+                ) : productos.length > 0 ? (
+                    <div className="overflow-x-auto border rounded-lg">
                         <table className="w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr className="bg-gray-200 sticky top-0">
-                                    <th className="border border-gray-300 p-2">Producto</th>
-                                    <th className="border border-gray-300 p-2">Vencimiento más cercano</th>
-                                    <th className="border border-gray-300 p-2">Cantidad Disponible</th>
+                            <thead className="sticky top-0 bg-gray-200 z-10">
+                                <tr>
+                                    <th className="border p-2">Producto</th>
+                                    <th className="border p-2">Vencimientos</th>
+                                    <th className="border p-2">Cantidad</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {productosOrdenados.map((producto) => {
-                                    const { vencimientos } = producto;
-                                    const vencimientoMasCercano = vencimientos.length > 0
-                                        ? vencimientos.sort((a, b) => {
-                                            const [añoA, mesA] = a.fecha_vencimiento.split("-").map(Number);
-                                            const [añoB, mesB] = b.fecha_vencimiento.split("-").map(Number);
+                                {productos.map((producto) => {
+                                    // Ordenamos los vencimientos para mostrarlos de menor a mayor
+                                    const vencimientosOrdenados = [...producto.vencimientos].sort((a, b) => {
+                                        const fechaA = new Date(`${a.fecha_vencimiento}-01`);
+                                        const fechaB = new Date(`${b.fecha_vencimiento}-01`);
+                                        return fechaA - fechaB;
+                                    });
 
-                                            return añoA !== añoB ? añoA - añoB : mesA - mesB;
-                                        })[0]
-                                        : null;
-                                    const cantidadTotal = vencimientos.length > 0
-                                        ? vencimientos.reduce((total, v) => total + v.cantidad, 0)
-                                        : 0;
+                                    // Sumamos todas las cantidades
+                                    // const totalGeneral = vencimientosOrdenados.reduce((acc, v) => acc + v.cantidad, 0);
 
                                     return (
-                                        <tr key={producto.id} className="text-center border-b border-gray-300">
-                                            <td className="border border-gray-300 p-2">{producto.nombre}</td>
-                                            <td className={`border border-gray-300 p-2 ${vencimientoMasCercano ? obtenerColorVencimiento(vencimientoMasCercano.fecha_vencimiento) : "text-gray-800"}`}>
-                                                {vencimientoMasCercano ? vencimientoMasCercano.fecha_vencimiento : "Sin vencimientos"}
+                                        <tr key={producto.id} className="text-center border-b">
+                                            {/* COLUMNA PRODUCTO */}
+                                            <td className="border p-2 align-center">{producto.nombre}</td>
+
+                                            {/* COLUMNA VENCIMIENTOS: un <span> por cada fecha, con color e ícono */}
+                                            <td className="border p-2 align-top">
+                                                {vencimientosOrdenados.length > 0 ? (
+                                                    vencimientosOrdenados.map((v) => (
+                                                        <span
+                                                            key={`${producto.id}-${v.fecha_vencimiento}`}
+                                                            className={`block ${obtenerColorVencimiento(v.fecha_vencimiento)}`}
+                                                        >
+                                                            {v.fecha_vencimiento} {obtenerIcono(v.fecha_vencimiento)}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-gray-600">Sin vencimientos</span>
+                                                )}
                                             </td>
-                                            <td className="border border-gray-300 p-2">
-                                                {cantidadTotal > 0 ? cantidadTotal : "Sin stock"}
+
+                                            {/* COLUMNA CANTIDAD: la cantidad de cada vencimiento */}
+                                            <td className="border p-2 align-top">
+                                                {vencimientosOrdenados.length > 0 ? (
+                                                    vencimientosOrdenados.map((v) => (
+                                                        <span
+                                                            key={`cantidad-${producto.id}-${v.fecha_vencimiento}`}
+                                                            className={`block ${v.cantidad > 0 ? "" : "text-gray-600"}`}
+                                                        >
+                                                            {v.cantidad > 0 ? v.cantidad : "Sin stock"}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-gray-600">-</span>
+                                                )}
                                             </td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
+
+                        {/* CONTROLES DE PAGINACIÓN */}
+                        <div className="mt-4 mb-4 flex justify-evenly">
+                            <button
+                            disabled={meta.current_page <= 1}
+                            onClick={() => irAPagina(meta.current_page - 1)}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                            >
+                            Anterior
+                            </button>
+
+                            <span>Página {meta.current_page} de {meta.last_page}</span>
+
+                            <button
+                            disabled={meta.current_page >= meta.last_page}
+                            onClick={() => irAPagina(meta.current_page + 1)}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                            >
+                            Siguiente
+                            </button>
+                        </div>
                     </div>
                 ) : (
-                    <p className="text-center text-gray-600">No hay productos con vencimientos cercanos.</p>
-                )}
-
-                {/* Paginación */}
-                {totalPages > 1 && (
-                    <div className="flex justify-center mt-4">
-                        <button
-                            className={`px-4 py-2 mx-1 rounded ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-700"}`}
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            Anterior
-                        </button>
-
-                        <span className="px-4 py-2 mx-1 border rounded">
-                            Página {currentPage} de {totalPages}
-                        </span>
-
-                        <button
-                            className={`px-4 py-2 mx-1 rounded ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-700"}`}
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            Siguiente
-                        </button>
-                    </div>
+                    <p className="text-center text-gray-600">No hay productos para mostrar.</p>
                 )}
             </div>
         </div>

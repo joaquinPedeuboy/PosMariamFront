@@ -1,9 +1,27 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import Swal from "sweetalert2";
 
 export default function AdminSidebar() {
 
     const { logout, user } = useAuth({middleware: 'auth'});
+    const MySwal = () => {
+        Swal.fire({
+        title: "Estas seguro?",
+        text: "Vas a cerrar sesión. ¿Querés continuar?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Cerrar Sesion",
+        cancelButtonText: "Cancelar"
+        }).then((result) => {
+        if (result.isConfirmed) {
+            logout();
+        }
+    });
+    }
+
   return (
     <aside className="lg:w-72 mb-2">
         {/* Imagen logotipo de admin */}
@@ -40,7 +58,7 @@ export default function AdminSidebar() {
             <button
                 type="button"
                 className="text-center bg-red-500 hover:bg-red-800 w-full p-3 font-bold text-white truncate"
-                onClick={logout}
+                onClick={MySwal}
             >
                 Cerrar sesion
             </button>
