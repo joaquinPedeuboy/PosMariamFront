@@ -55,24 +55,50 @@ export default function EstadisticasProductos() {
             <FiltroFecha año={año} setAño={setAño} mes={mes} setMes={setMes} />
           </div>
           <div className="flex justify-evenly">
-            <div className="grid grid-cols-2 gap-24 bg-blue-300 rounded-md p-6">
+            <div className="grid grid-cols-2 gap-24 bg-blue-300 bg-opacity-50 rounded-md p-6">
                 {/* Lista de productos más vendidos */}
                 <div>
-                  <h3 className="text-2xl font-bold mb-4">Top 10 Productos Más Vendidos</h3>
-                  <ul className="list-disc pl-5">
+                  <h3 className="text-2xl font-bold mb-4 text-center">Top 10 Productos Más Vendidos</h3>
+                  <table className="shadow-md rounded-sm">
+                    <thead className="bg-gray-200 z-10">
+                      <tr>
+                        <th className="border p-2">Producto</th>
+                        <th className="border p-2">Cantidad Vendida</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {productosMasVendidos.map((producto, index) => (
-                          <li key={index}>{producto.nombre} - {producto.cantidad_vendida} vendidos</li>
+                        <tr className="text-center border-b bg-neutral-300" key={index}>
+                          {/* Columna nombre producto */}
+                          <td className="border p-2 align-center">{producto.nombre}</td>
+                          {/* Columna cantidad vendida */}
+                          <td className="border p-2 align-center">{producto.cantidad_vendida} vendidos</td>
+                        </tr>
                       ))}
-                  </ul>
+                    </tbody>
+                  </table>
                 </div>
                 {/* Lista de productos menos vendidos */}
                 <div>
-                  <h3 className="text-2xl font-bold mb-4">Top 10 Productos Menos Vendidos</h3>
-                  <ul className="list-disc pl-5">
+                  <h3 className="text-2xl font-bold mb-4 text-center">Top 10 Productos Menos Vendidos</h3>
+                  <table className="shadow-md rounded-sm">
+                    <thead className="bg-gray-200 z-10">
+                      <tr>
+                        <th className="border p-2">Producto</th>
+                        <th className="border p-2">Cantidad Vendida</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {productosMenosVendidos.map((producto, index) => (
-                          <li key={index}>{producto.nombre} - {producto.cantidad_vendida} vendidos</li>
+                        <tr className="text-center border-b bg-neutral-300" key={index}>
+                          {/* Columna nombre producto */}
+                          <td className="border p-2 align-center">{producto.nombre}</td>
+                          {/* Columna cantidad vendida */}
+                          <td className="border p-2 align-center">{producto.cantidad_vendida} vendidos</td>
+                        </tr>
                       ))}
-                  </ul>
+                    </tbody>
+                  </table>
                 </div>
             </div>
           </div>
@@ -100,13 +126,20 @@ export default function EstadisticasProductos() {
             {productosMasVendidos.length > 0 && (
                 <div className="my-10">
                     <h3 className="text-xl font-bold">Gráfico de Productos Más Vendidos</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={productosMasVendidos}>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={productosMasVendidos} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="nombre" />
-                            <YAxis />
+                            <XAxis 
+                              dataKey="nombre"
+                              angle={0}
+                              textAnchor="middle"
+                              interval={0}
+                              height={60}
+                              tick={{ fontSize: 12, wordBreak: 'break-all' }}
+                            />
+                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false}/>
                             <Tooltip formatter={(value) => formatearDinero(value)} />
-                            <Bar dataKey="cantidad_vendida" fill="#4CAF50" />
+                            <Bar dataKey="cantidad_vendida" fill="#4CAF50" barSize={100} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -116,13 +149,20 @@ export default function EstadisticasProductos() {
             {productosMenosVendidos.length > 0 && (
                 <div className="my-10">
                     <h3 className="text-xl font-bold">Gráfico de Productos Menos Vendidos</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={productosMenosVendidos}>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={productosMenosVendidos} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="nombre" />
-                            <YAxis />
+                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false}/>
+                            <XAxis
+                              dataKey="nombre"
+                              angle={0}
+                              textAnchor="middle"
+                              interval={0}
+                              height={60}
+                              tick={{ fontSize: 12, wordBreak: 'break-all' }}
+                            />
                             <Tooltip formatter={(value) => formatearDinero(value)} />
-                            <Bar dataKey="cantidad_vendida" fill="#FF5733" />
+                            <Bar dataKey="cantidad_vendida" fill="#FF5733" barSize={100} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
