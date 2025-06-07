@@ -1,20 +1,34 @@
 import clienteAxios from '../config/axios';
 import useSWR from 'swr';
 import { Puff } from "react-loader-spinner";
+import { useState } from 'react';
 
 export default function Ofertas() {
-const token = localStorage.getItem("AUTH_TOKEN");
+    const token = localStorage.getItem("AUTH_TOKEN");
+    const [paginaActual, setPaginaActual] = useState(1);
 
-// Consulta swr
-const fetcher = (url) => clienteAxios.get(url, {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-}).then((res) => res.data);
+    // Consulta swr
+    const fetcher = (url) => clienteAxios.get(url, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).then((res) => res.data);
 
-const {data, error, isLoading} = useSWR('/api/productos?oferta=true', fetcher, { refreshInterval: 10000 })
+    const params = new URLSearchParams({
+        oferta: 'true',
+        page: paginaActual
+    }).toString();
 
-if (error) return <p className="text-red-500">Error: {error.message}</p>;
+    const {data, error, isLoading} = useSWR(`/api/productos?${params}`, fetcher, { refreshInterval: 10000 })
+
+    const meta = data?.meta  || {};
+
+    const irAPagina = n => {
+        if (n < 1 || n > meta.last_page) return;
+        setPaginaActual(n);
+    };
+
+    if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
     <div>
@@ -30,13 +44,52 @@ if (error) return <p className="text-red-500">Error: {error.message}</p>;
             )}
             {/* Lista de productos en oferta */}
             {!isLoading && data?.data.length > 0 ? (
-                <ul className="flex flex-col items-center list-disc p-5">
-                    {data.data.map((producto) => (
-                        <li key={producto.id}>
-                            <p className='text-xl'><strong>{producto.nombre}</strong> - Precio Oferta: ${producto.ofertas?.precio_oferta} - Cantidad Disponible: {producto.ofertas?.cantidad}</p>
-                        </li>
-                    ))}
-                </ul>
+                <div className="overflow-x-auto border rounded-lg">
+                    {/** Tabla de ofertas */}
+                    <table className="w-full border-collapse border border-gray-300">
+                        <thead className="sticky top-0 bg-gray-200 z-10">
+                            <tr>
+                                <th className="border p-2">Producto</th>
+                                <th className="border p-2">Precio de Oferta</th>
+                                <th className="border p-2">Cantidad Disponible</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {data.data.map((producto) =>(
+                                <tr className="text-center border-b" key={producto.id}>
+                                    {/* Columna de nombre producto */}
+                                    <td className="border p-2 align-center">{producto.nombre}</td>
+                                    {/* Columna de precio de oferta */}
+                                    <td className="border p-2 align-center">${producto.ofertas?.precio_oferta}</td>
+                                    {/* Columna de cantidad en oferta */}
+                                    <td className="border p-2 align-center">{producto.ofertas?.cantidad}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* CONTROLES DE PAGINACIÓN */}
+                        <div className="mt-4 mb-4 flex justify-evenly">
+                            <button
+                            disabled={meta.current_page <= 1}
+                            onClick={() => irAPagina(meta.current_page - 1)}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                            >
+                            Anterior
+                            </button>
+
+                            <span>Página {meta.current_page} de {meta.last_page}</span>
+
+                            <button
+                            disabled={meta.current_page >= meta.last_page}
+                            onClick={() => irAPagina(meta.current_page + 1)}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                            >
+                            Siguiente
+                            </button>
+                        </div>
+                </div>
             ) : (
                 <p>No hay productos en oferta.</p>
             )}
