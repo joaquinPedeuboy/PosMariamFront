@@ -129,8 +129,8 @@ export default function EstadisticasVentas() {
                                                 angle={0}
                                                 textAnchor="middle"
                                                 interval={0}
-                                                height={60} tickFormatter={(tick, index) => `${ventasDiarias[index]?.dia} (${ventasDiarias[index]?.fecha.substring(5)})`} />
-                                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false} />
+                                                height={100} tickFormatter={(tick, index) => `${ventasDiarias[index]?.dia} (${ventasDiarias[index]?.fecha.substring(5)})`} />
+                                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.5)]} allowDecimals={false} />
                                             <Tooltip formatter={(value) => formatearDinero(value)} />
                                             <Bar dataKey="total_vendido" fill="#82ca9d" activeBar={<Rectangle fill="#0b5345" stroke="#239b56" />} barSize={100} />
                                         </BarChart>
@@ -187,17 +187,17 @@ export default function EstadisticasVentas() {
                         {/* Si no hay datos, mostrar el gráfico */}
                         {ventasMensuales && ventasMensuales.length > 0 && (
                             <ResponsiveContainer width="100%" height={500}>
-                                <BarChart data={ventasMensuales} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                                <BarChart data={ventasMensuales} margin={{ top: 40, right: 30, left: 20, bottom: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis 
                                         dataKey="mes" 
                                         angle={0}
                                         textAnchor="middle"
                                         interval={0}
-                                        height={60}
-                                        tick={{ fontSize: 12, wordBreak: 'break-all' }}
+                                        height={100}
+                                        tick={{ fontSize: 12 }}
                                     />
-                                    <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false} />
+                                    <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.5)]} allowDecimals={false} />
                                     <Tooltip formatter={(value) => formatearDinero(value)} />
                                     <Bar dataKey="total_vendido" fill="#f39c12" activeBar={<Rectangle fill="#9c640c" stroke="#d68910" />} maxBarSize={100}/>
                                 </BarChart>

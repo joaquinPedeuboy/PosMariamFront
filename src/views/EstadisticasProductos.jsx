@@ -131,13 +131,13 @@ export default function EstadisticasProductos() {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis 
                               dataKey="nombre"
-                              angle={0}
-                              textAnchor="middle"
+                              angle={-15}
+                              textAnchor="end"
                               interval={0}
-                              height={60}
-                              tick={{ fontSize: 12, wordBreak: 'break-all' }}
+                              height={100}
+                              tick={{ fontSize: 12 }}
                             />
-                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false}/>
+                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.5)]} allowDecimals={false}/>
                             <Tooltip formatter={(value) => formatearDinero(value)} />
                             <Bar dataKey="cantidad_vendida" fill="#4CAF50" barSize={100} />
                         </BarChart>
@@ -152,14 +152,14 @@ export default function EstadisticasProductos() {
                     <ResponsiveContainer width="100%" height={400}>
                         <BarChart data={productosMenosVendidos} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} allowDecimals={false}/>
+                            <YAxis domain={[0, dataMax => Math.ceil(dataMax * 1.5)]} allowDecimals={false}/>
                             <XAxis
                               dataKey="nombre"
-                              angle={0}
-                              textAnchor="middle"
+                              angle={-15}
+                              textAnchor="end"
                               interval={0}
-                              height={60}
-                              tick={{ fontSize: 12, wordBreak: 'break-all' }}
+                              height={100}
+                              tick={{ fontSize: 12 }}
                             />
                             <Tooltip formatter={(value) => formatearDinero(value)} />
                             <Bar dataKey="cantidad_vendida" fill="#FF5733" barSize={100} />
