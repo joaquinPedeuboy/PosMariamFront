@@ -13,6 +13,7 @@ import EstadisticasProductos from "../views/EstadisticasProductos";
 import Ofertas from "../views/Ofertas";
 import Vencimientos from "../views/Vencimientos";
 import Departamentos from "../views/Departamentos";
+import Stock from "../views/Stock";
 
 
 const router = createBrowserRouter([
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/productos/departamentos',
                 element: <Departamentos />
+            },
+            {
+                path: '/admin/productos/stock',
+                element: <Stock />
             }
         ]
     }

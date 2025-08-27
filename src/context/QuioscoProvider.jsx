@@ -87,7 +87,7 @@ const QuioscoProvider = ({children}) => {
             mutate();
         } catch (error) {
             toast.error('Error al eliminar el producto');
-            console.error("Error al eliminar producto", error);
+            
         }
     };
 
@@ -101,7 +101,7 @@ const QuioscoProvider = ({children}) => {
             mutate('/api/departamentos');
         } catch (error) {
             toast.error('Error al eliminar el Departamento');
-            console.error("Error al eliminar Departamento", error);
+            
         }
     };
 

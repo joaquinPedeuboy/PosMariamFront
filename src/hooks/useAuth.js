@@ -30,7 +30,8 @@ export const useAuth = ({middleware, url}) => {
     
         } catch (error) {
             if (error.response) {
-                setErrores(Object.values(error.response.data.errors));
+                // console.log(Object.values(data));
+                setErrores(Object.values(error.response.data?.errors || [error.response.data?.message || 'Error desconocido']));
             } else {
                 setErrores(['Error de red. Por favor, inténtalo de nuevo.']);
             }
@@ -46,6 +47,7 @@ export const useAuth = ({middleware, url}) => {
     
         } catch (error) {
             if (error.response) {
+                console.log(Object.values(data));
                 setErrores(Object.values(error.response.data.errors));
             } else {
                 setErrores(['Error de red. Por favor, inténtalo de nuevo.']);

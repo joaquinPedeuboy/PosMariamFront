@@ -81,7 +81,7 @@ export default function Departamentos() {
       {/* Lista de departamentos en grid */}
       {!isLoading && data && (
         <>
-          {data.data.length === 0 ? (
+          {(data?.data?.length ??0)=== 0 ? (
             <p className="text-center text-gray-600">No se encontraron departamentos.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

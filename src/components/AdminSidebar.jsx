@@ -51,6 +51,7 @@ export default function AdminSidebar() {
             <Link to="/admin/productos/ofertas" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Productos en Oferta</Link>
             <Link to="/admin/productos/vencimientos" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Vencimientos de Productos</Link>
             <Link to="/admin/productos/departamentos" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Departamentos de Productos</Link>
+            <Link to="/admin/productos/stock" className="font-bold border-b-2 text-lg cursor-pointer truncate p-3 hover:bg-violet-200">Stock</Link>
         </nav>
 
         {/* Boton cerrar sesion de admin */}

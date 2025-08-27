@@ -23,6 +23,10 @@ const customStyles = {
     maxHeight: "100vh", // Limita la altura de la modal
     overflowY: "auto", // Permite el scroll si el contenido es demasiado grande
   },
+  overlay: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    zIndex: 10050,
+  },
 };
 
 Modal.setAppElement('#root');
@@ -62,10 +66,10 @@ export default function AdminLayout() {
         ) : (
     
       <>
-        <div className="md:flex">
+        <div className="md:flex min-h-screen">
           <AdminSidebar />
           
-          <main className="flex-1 h-screen overflow-y-scroll bg-gray-100 md:p-2 lg:p-6">
+          <main className="flex-1 overflow-y-auto bg-gray-100 md:p-2 lg:p-6">
           <Outlet />
           </main>
         </div>
