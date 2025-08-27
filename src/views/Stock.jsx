@@ -47,7 +47,12 @@ export default function StockProductos() {
 
 
     const productos = data?.data || [];
-    const meta = data?.meta || {};
+    const meta = data?.meta ?? {
+    current_page: data?.current_page,
+    last_page: data?.last_page,
+    per_page: data?.per_page,
+    total: data?.total
+    };
 
     const { handleClickModalEditarProducto, handleSetProducto, handleEliminarProducto } = useQuiosco();
 
@@ -65,9 +70,8 @@ export default function StockProductos() {
 
     // paginación
     const irAPagina = (n) => {
-        if (n >= 1 && n <= (meta.last_page || 1)) {
-            setPaginaActual(n);
-        }
+        const last = meta?.last_page ?? 1;
+        if (n >= 1 && n <= last) setPaginaActual(n);
     };
 
     // color / alerta por stock
@@ -183,9 +187,9 @@ export default function StockProductos() {
 
                         {/* paginación */}
                         <div className="mt-4 flex justify-between items-center">
-                            <button onClick={() => irAPagina((meta.current_page || 1) - 1)} disabled={!meta.current_page || meta.current_page <= 1} className="px-4 py-2 bg-gray-200 rounded">Anterior</button>
-                            <div>Página {meta.current_page ?? 1} {meta.last_page ? `de ${meta.last_page}` : ""}</div>
-                            <button onClick={() => irAPagina((meta.current_page || 1) + 1)} disabled={!meta.last_page || meta.current_page >= meta.last_page} className="px-4 py-2 bg-gray-200 rounded">Siguiente</button>
+                            <button onClick={() => irAPagina((meta?.current_page ?? 1) - 1)} disabled={!meta?.current_page || (meta?.current_page ?? 1) <= 1} className="px-4 py-2 bg-gray-200 rounded">Anterior</button>
+                            <div>Página {meta?.current_page ?? 1} de {meta?.last_page ?? 1}</div>
+                            <button onClick={() => irAPagina((meta?.current_page ?? 1) + 1)} disabled={!meta?.last_page || (meta?.current_page ?? 1) >= (meta?.last_page ?? 1)} className="px-4 py-2 bg-gray-200 rounded">Siguiente</button>
                         </div>
                     </div>
                 ) : (
