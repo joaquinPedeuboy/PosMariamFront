@@ -15,6 +15,7 @@ import OfflineBanner from "../components/OfflineBanner";
 import { mutate } from "swr";
 import RevalidateIndicator from "../components/RevalidateIndicator";
 import OnlineSuccessBanner from "../components/OnlineSuccesBanner";
+import { softRevalidate } from "../utils/softRevalidate";
 
 const customStyles = {
   content: {
