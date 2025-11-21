@@ -1,5 +1,8 @@
 import{ Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import OfflineBanner from '../components/OfflineBanner';
+import OnlineSuccessBanner from '../components/OnlineSuccesBanner';
+import RevalidateIndicator from '../components/RevalidateIndicator';
 
 export default function Layout() {
 
@@ -7,6 +10,9 @@ export default function Layout() {
 
   return (
     <>
+      <OfflineBanner/>
+      <OnlineSuccessBanner />
+      <RevalidateIndicator />
       {/* Boton cerrar sesion */}
       <div className="flex justify-end my-5 px-5">
             <button

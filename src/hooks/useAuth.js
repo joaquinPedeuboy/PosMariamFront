@@ -8,17 +8,25 @@ export const useAuth = ({middleware, url}) => {
     const token = localStorage.getItem('AUTH_TOKEN');
     const navigate = useNavigate();
 
-    const { data : user, error, mutate } = useSWR('/api/user', () => 
-        clienteAxios('/api/user', {
-            headers: {
-                Authorization: `Bearer ${token}`
+    const { data : user, error, mutate } = useSWR('/api/user', async () => {
+        try {
+            const res = await clienteAxios('/api/user', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return res.data;
+        } catch (error) {
+
+            // 👉 offline: NO tirar error que llegue al middleware
+            if (error.isOffline || error.message === "Network Error") {
+                return null; // mantiene la sesión pero no rompe nada
             }
-        })
-        .then(res => res.data)
-        .catch(error => {
-            throw Error(error?.response?.data?.errors)
-        })
-    )
+
+            // 👉 si existe response, es un error real del servidor
+            if (error.response) throw error;
+
+            throw error;
+        }
+    });
 
     const login = async (datos, setErrores, callback) => {
         try {
@@ -70,29 +78,31 @@ export const useAuth = ({middleware, url}) => {
     }
     
     useEffect(() => {
+
+        if (!navigator.onLine) return;
+
         if(middleware === 'guest' && url && user) {
-            navigate(url)
+            navigate(url);
         }
 
         if(middleware === 'guest' && user && user.admin) {
-            navigate('/admin')
+            navigate('/admin');
         }
 
         if(middleware === 'admin' && user && !user.admin) {
-            navigate('/')
+            navigate('/');
         }
 
-        if(middleware === 'auth' && error) {
-            navigate('/auth/login')
+        if (middleware === 'auth' && error?.response?.status === 401) {
+            navigate('/auth/login');
         }
 
-        // Evitar redirección en rutas públicas
+        // Rutas públicas nunca redirigen
         if (middleware === 'public') {
             return;
         }
 
-
-    }, [user, error])
+    }, [user, error]);
 
     return {
         login,

@@ -11,6 +11,10 @@ import ModalCrearDepa from "../components/ModalCrearDepa";
 import { useAuth } from "../hooks/useAuth";
 import { RotatingLines } from 'react-loader-spinner'
 import ModalEditarDepa from "../components/ModalEditarDepa";
+import OfflineBanner from "../components/OfflineBanner";
+import { mutate } from "swr";
+import RevalidateIndicator from "../components/RevalidateIndicator";
+import OnlineSuccessBanner from "../components/OnlineSuccesBanner";
 
 const customStyles = {
   content: {
@@ -36,6 +40,17 @@ export default function AdminLayout() {
   const { modalEditar, modalCrear, modalCrearDepa, modalEditarDepa } = useQuiosco();
   const { user, error, isLoading } = useAuth({middleware: 'admin'});
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      // Revalidar user y otras rutas vitales
+      softRevalidate('/api/user');
+      softRevalidate('/api/productos'); // opcional
+    };
+
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, []);
 
   useEffect(() => {
     const loadProductos = async () => {
@@ -66,6 +81,9 @@ export default function AdminLayout() {
         ) : (
     
       <>
+        <OfflineBanner />
+        <OnlineSuccessBanner />
+        <RevalidateIndicator />
         <div className="md:flex min-h-screen">
           <AdminSidebar />
           

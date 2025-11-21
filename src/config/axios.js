@@ -11,3 +11,10 @@ const clienteAxios = axios.create({
 })
 
 export default clienteAxios;
+
+clienteAxios.interceptors.request.use(config => {
+    if (!navigator.onLine) {
+        return Promise.reject({ isOffline: true });
+    }
+    return config;
+});
