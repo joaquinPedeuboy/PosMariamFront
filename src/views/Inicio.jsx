@@ -24,7 +24,7 @@ const handleKeyDown = (e) => {
     e.preventDefault();
     if (inputBusqueda.trim() !== "") {
       setBusqueda(inputBusqueda.trim());
-      setInputBusqueda(""); // Limpia el input después de buscar
+      setTimeout(() => setInputBusqueda(""), 50); // Limpia el input después de buscar
     }
   }
 };
@@ -33,7 +33,7 @@ const handleKeyDown = (e) => {
 if (error) return <p className="text-red-500">Error: {error.message}</p>;
   return (
     <>
-      <h1 className="text-4xl font-bold text-center mt-5">Consulta el precio del producto por codigo de barras</h1>
+      <h1 className="text-2xl md:text-4xl font-serif text-center mt-5">Consultar el precio del producto escaneando el código de barras</h1>
       
       {/* Barra de búsqueda */}
       <div className="mt-4 mb-4 flex justify-center items-center border rounded-xl bg-gray-200 p-4">
@@ -50,8 +50,8 @@ if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
       {/* Spinner de carga */}
       {isLoading && (
-        <div className="flex justify-center items-center h-40">
-          <Puff height="100" width="100" color="#ba5dd1" ariaLabel="cargando.." />
+        <div className="flex justify-center mt-10">
+          <Puff height="80" width="80" color="#ba5dd1" />
         </div>
       )}
 
@@ -60,18 +60,18 @@ if (error) return <p className="text-red-500">Error: {error.message}</p>;
         <div className="flex flex-col items-center">
           {data?.data?.length > 0 ? (
             data.data.map((producto) => (
-              <div key={producto.id} className="border rounded p-4 shadow-md mb-4 w-full text-left">
+              <div key={producto.id} className="border rounded-full p-4 shadow-md shadow-violet-900 mb-4 w-full text-center">
                 <h2 className="text-3xl font-bold font-serif">{producto.nombre}</h2>
-                <p>Código: {producto.codigo_barras}</p>
+                <p className="text-gray-700 mt-1">Código: {producto.codigo_barras}</p>
 
                 {/* Precio original y precio de oferta (si existe) */}
-                <div className="flex items-center mt-2">
-                  <p className={producto.ofertas ? "text-lg font-bold text-red-500 line-through mr-4" : "text-2xl font-bold underline"}>
-                    Precio: ${producto.precio}
+                <div className="flex justify-center mt-2 items-center">
+                  <p className={producto.ofertas ? "text-lg font-bold text-red-500 line-through mr-4 shadow-xl p-4 border rounded-full" : "text-2xl font-black shadow-xl p-4 border rounded-full"}>
+                    Precio: <span className={producto.ofertas ? "text-lg font-bold text-red-500 line-through mr-4" : "text-green-700"}>${producto.precio}</span>
                   </p>
                   {/* Mostrar precio de oferta si existe */}
                   {producto.ofertas && (
-                    <p className="text-2xl font-black text-green-600">
+                    <p className="text-2xl font-black text-green-600 shadow-xl p-4 border rounded-full">
                       ${producto.ofertas.precio_oferta} <span className="text-sm font-medium">En oferta</span>
                     </p>
                   )}

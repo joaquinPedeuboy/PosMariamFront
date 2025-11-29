@@ -34,6 +34,7 @@ export default function Productos() {
         if (e.key === 'Enter') {
             e.preventDefault(); // Prevenir la acción predeterminada (enviar formulario, por ejemplo)
             handleBuscar(); // Ejecuta la búsqueda
+            setInputBusqueda("");
         }
     };
     

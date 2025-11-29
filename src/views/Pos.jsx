@@ -52,10 +52,10 @@ export default function Pos() {
         onConfirm={handleConfirmarOferta}
         onClose={() => setModalOferta(false)}
       />
-      <div className="lg:grid lg:grid-flow-col md:gap-5 flex flex-col">
+      <div className="md:gap-5 flex flex-col">
         <div className="border rounded-lg shadow p-4">
             
-          <div className="p-8 shadow border bg-gray-300 rounded-lg">
+          <div className="p-2 shadow border bg-gray-300 rounded-lg">
             <p className="text-bold text-lg text-center font-black">Buscar Productos por nombre o codigo de barras</p>
             {/* Barra de búsqueda */}
             <div className="my-5 flex justify-center">
@@ -63,7 +63,7 @@ export default function Pos() {
                 type="text"
                 value={term}
                 placeholder="Buscar productos..."
-                className="w-2/4 p-2 border rounded"
+                className="sm:w-2/4 lg:w-1/4 p-2 border rounded"
                 onChange={e => setTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus

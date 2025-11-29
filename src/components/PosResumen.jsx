@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import useQuiosco from "../hooks/useQuiosco"
 import { formatearDinero } from "../helpers";
 import PosResumenProducto from "./PosResumenProducto";
@@ -5,6 +6,15 @@ import PosResumenProducto from "./PosResumenProducto";
 export default function PosResumen() {
 
 const { pedido, total, handleSubmitNuevaVenta } = useQuiosco();
+
+const finalRef = useRef(null);
+
+  // 👉 scrollea al final cuando cambia el pedido
+useEffect(() => {
+  if (finalRef.current) {
+    finalRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [pedido]);
     
 const handleSubmit = e => {
     e.preventDefault();
@@ -24,30 +34,32 @@ const comprobarPedido = () => pedido.length === 0;
         Aqui podras ver el resumen y totales de tu venta
         </p>
         <div className="py-10">
-        {pedido.length === 0 ? (
-            <p className="text-center text-2xl text-gray-600">
-            No hay elementos en tu venta aun
-            </p>
-        ) : (
-            pedido.map(producto => {
-                // Calcula la cantidad real según si se usa oferta o vencimiento
-                const cantidadProducto = producto.usarOferta
-                  ? (producto.ofertas?.cantidad || 0)
-                  : (producto.vencimientos?.[0]?.cantidad || 0);
-                  
-                return (
-                  <PosResumenProducto
-                    key={producto.uniqueId}
-                    producto={producto}
-                  />
-                );
-              })
-            )}
-        </div>
-        <p className="text-xl mt-6 font-black">
-        Total a vender: {''}
-        {formatearDinero(total)}
-        </p>
+          {pedido.length === 0 ? (
+              <p className="text-center text-2xl text-gray-600">
+              No hay elementos en tu venta aun
+              </p>
+          ) : (
+              pedido.map(producto => {
+                  // Calcula la cantidad real según si se usa oferta o vencimiento
+                  const cantidadProducto = producto.usarOferta
+                    ? (producto.ofertas?.cantidad || 0)
+                    : (producto.vencimientos?.[0]?.cantidad || 0);
+                    
+                  return (
+                    <PosResumenProducto
+                      key={producto.uniqueId}
+                      producto={producto}
+                    />
+                  );
+                })
+              )}
+              <div ref={finalRef}></div>
+          </div>
+          <p className="shadow-md w-1/4 text-xl mt-6 font-bold text-center p-4">
+            Total a vender: {''}
+            <span className="text-2xl text-green-700">{formatearDinero(total)}</span>
+          </p>
+        
 
         <form 
         className="w-full"

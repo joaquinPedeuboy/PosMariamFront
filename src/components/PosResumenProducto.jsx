@@ -37,7 +37,7 @@ const reducirCantidad = () => {
 
 return (
     <div className="flex justify-between shadow space-y-1 p-4 bg-white">
-        <div className="space-y-2">
+        <div className="space-y-1">
             <p className="text-xl font-bold">{nombre}</p>
         
             <div className="flex gap-4 mt-5">

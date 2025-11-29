@@ -14,6 +14,7 @@ import Ofertas from "../views/Ofertas";
 import Vencimientos from "../views/Vencimientos";
 import Departamentos from "../views/Departamentos";
 import Stock from "../views/Stock";
+import ConsultaRapida from "../views/ConsultaRapida";
 
 
 const router = createBrowserRouter([
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/productos/stock',
                 element: <Stock />
+            },
+            {
+                path: '/admin/consulta-rapida',
+                element: <ConsultaRapida />
             }
         ]
     }
